@@ -4,7 +4,7 @@ import numpy as np
 
 class Board:
 
-    cell_size = 150
+    CELL_SIZE = 100 # dictates the size of the board
 
     def __init__(self) -> None:
         board = []
@@ -17,7 +17,7 @@ class Board:
             for x_pos, file in enumerate(range(ord('a'), ord('h') + 1)):
 
                 square_notation = '{}{}'.format(str(rank), chr(file))
-                row.append(Square(square_color, Vector2(x_pos * Board.cell_size, y_pos * Board.cell_size), square_notation))
+                row.append(Square(square_color, Vector2(x_pos * Board.CELL_SIZE, y_pos * Board.CELL_SIZE), square_notation))
                 
                 #Switches square color each time
                 if x_pos == 7: break #makes sure colors alternate each row
@@ -25,7 +25,7 @@ class Board:
 
             board.append(row)
         self.board = np.array(board)
-        self.board_surface = pygame.Surface((Board.cell_size * 8, Board.cell_size * 8))
+        self.board_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8))
 
     
     def draw_board(self, screen):
@@ -45,6 +45,6 @@ class Square:
         pass
 
     def draw_square(self, board) -> None:
-        square_rect = pygame.Rect(self.pos.x, self.pos.y, Board.cell_size, Board.cell_size)
+        square_rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
         pygame.draw.rect(board, self.color, square_rect)
         pass

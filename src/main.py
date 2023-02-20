@@ -14,7 +14,7 @@ def main():
     game = GameLogic()
 
     #Chess board has 8 squares. 1 & a start at bottom left rook, 8 & h at top right black rook
-    cell_size = Board.cell_size
+    cell_size = Board.CELL_SIZE
     screen = pygame.display.set_mode((8 * cell_size, 8 * cell_size))
     pygame.display.set_caption('Chess')
     clock = pygame.time.Clock()
