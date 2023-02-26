@@ -1,54 +1,53 @@
 import pygame, os
 
-WHITE = 0
-BLACK = 1
+class Piece():
 
-class Pawn:
-    WHITE_PIECE = pygame.image.load(os.path.join('..', 'resources', 'WhitePawn.png'))
-    BLACK_PIECE = pygame.image.load(os.path.join('..', 'resources', 'BlackPawn.png'))
+    #constant vars
+    PAWN = 0
+    KNIGHT = 1
+    BISHOP = 2
+    ROOK = 3
+    QUEEN = 4
+    KING = 5
 
-    def __init__(self, color) -> None:
+    WHITE = 8
+    BLACK = 16
+
+    def __init__(self, piece_type, color) -> None:
         self.color = color
-        self.image = Pawn.WHITE_PIECE if color == 0 else Pawn.BLACK_PIECE
+        self.piece = piece_type
+        self.image = self.initialize_image()
 
-class Knight:
-    WHITE_PIECE = pygame.image.load(os.path.join('..', 'resources', 'WhiteKnight.png'))
-    BLACK_PIECE = pygame.image.load(os.path.join('..', 'resources', 'BlackKnight.png'))
+    def initialize_image(self):
+        color = 'White' if color == Piece.WHITE else 'Black'
 
-    def __init__(self, color) -> None:
-        self.color = color
-        self.image = Knight.WHITE_PIECE if color == 0 else Knight.BLACK_PIECE
+        if self.piece == Piece.PAWN:
+            return pygame.image(os.path.join('..', 'resources', '{}Pawn.png'.format(color)))
+        elif self.piece == Piece.KNIGHT:
+            return pygame.image(os.path.join('..', 'resources', '{}Knight.png'.format(color)))
+        elif self.piece == Piece.BISHOP:
+            return pygame.image(os.path.join('..', 'resources', '{}Bishop.png'.format(color)))
+        elif self.piece == Piece.ROOK:
+            return pygame.image(os.path.join('..', 'resources', '{}Rook.png'.format(color)))
+        elif self.piece == Piece.QUEEN:
+            return pygame.image(os.path.join('..', 'resources', '{}Queen.png'.format(color)))
+        elif self.piece == Piece.KING:
+            return pygame.image(os.path.join('..', 'resources', '{}King.png'.format(color)))
+    
+    def pawn_moves(self, board):
+        pass
+    
+    def knight_moves(self, board):
+        pass
 
-class Bishop:
-    WHITE_PIECE = pygame.image.load(os.path.join('..', 'resources', 'WhiteBishop.png'))
-    BLACK_PIECE = pygame.image.load(os.path.join('..', 'resources', 'BlackBishop.png'))
+    def bishop_moves(self, board):
+        pass
 
-    def __init__(self, color) -> None:
-        self.color = color
-        self.image = Bishop.WHITE_PIECE if color == 0 else Bishop.BLACK_PIECE
+    def rook_moves(self, board):
+        pass
 
-class Rook:
-    WHITE_PIECE = pygame.image.load(os.path.join('..', 'resources', 'WhiteRook.png'))
-    BLACK_PIECE = pygame.image.load(os.path.join('..', 'resources', 'BlackRook.png'))
+    def queen_moves(self, board):
+        pass
 
-    def __init__(self, color) -> None:
-        self.color = color
-        self.image = Rook.WHITE_PIECE if color == 0 else Rook.BLACK_PIECE
-
-class Queen:
-    WHITE_PIECE = pygame.image.load(os.path.join('..', 'resources', 'WhiteQueen.png'))
-    BLACK_PIECE = pygame.image.load(os.path.join('..', 'resources', 'BlackQueen.png'))
-
-    def __init__(self, color) -> None:
-        self.color = color
-        self.image = Queen.WHITE_PIECE if color == 0 else Queen.BLACK_PIECE
-
-class King:
-    WHITE_PIECE = pygame.image.load(os.path.join('..', 'resources', 'WhiteKing.png'))
-    BLACK_PIECE = pygame.image.load(os.path.join('..', 'resources', 'BlackKing.png'))
-
-    def __init__(self, color) -> None:
-        self.color = color
-        self.image = King.WHITE_PIECE if color == 0 else King.BLACK_PIECE
-
-
+    def king_moves(self, board):
+        pass
