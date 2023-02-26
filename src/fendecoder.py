@@ -6,6 +6,7 @@ class FenDecoder:
         fields = fen_str.split()
 
         #Make piece array
+        #Makes a 2d array of tuples (Piece_Type, Piece_Color). If there is no piece on the square, inserts an empty string
         piece_placements = fields[0].split('/')
         self.piece_placement = []
         for pieces in piece_placements:
