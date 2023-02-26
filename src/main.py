@@ -19,11 +19,11 @@ def main():
     pygame.display.set_caption('Chess')
     clock = pygame.time.Clock()
 
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+                running = False
         
         screen.fill('Beige')
         game.draw_elements(screen)
@@ -31,6 +31,7 @@ def main():
         pygame.display.update()
         clock.tick(60)
 
+    pygame.quit()
 
 if __name__ == '__main__':
     main()
