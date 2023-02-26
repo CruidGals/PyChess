@@ -42,9 +42,8 @@ class Square:
         self.color = color
         self.pos = position
         self.notation = notation
-        pass
 
     def draw_square(self, board) -> None:
         square_rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
         pygame.draw.rect(board, self.color, square_rect)
-        pass
+
