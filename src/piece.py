@@ -1,5 +1,5 @@
 import pygame, os
-
+from pygame import Vector2
 class Piece():
 
     #constant vars
@@ -13,8 +13,9 @@ class Piece():
     WHITE = 8
     BLACK = 16
 
-    def __init__(self, piece_type, color) -> None:
+    def __init__(self, square, piece_type, color) -> None:
         self.color = color
+        self.attached_square = square
         self.piece = piece_type
         self.image = self.initialize_image()
 
@@ -22,18 +23,22 @@ class Piece():
         color = 'White' if color == Piece.WHITE else 'Black'
 
         if self.piece == Piece.PAWN:
-            return pygame.image(os.path.join('..', 'resources', '{}Pawn.png'.format(color)))
+            return pygame.image.load(os.path.join('..', 'resources', '{}Pawn.png'.format(color))).convert_alpha()
         elif self.piece == Piece.KNIGHT:
-            return pygame.image(os.path.join('..', 'resources', '{}Knight.png'.format(color)))
+            return pygame.image.load(os.path.join('..', 'resources', '{}Knight.png'.format(color))).convert_alpha()
         elif self.piece == Piece.BISHOP:
-            return pygame.image(os.path.join('..', 'resources', '{}Bishop.png'.format(color)))
+            return pygame.image.load(os.path.join('..', 'resources', '{}Bishop.png'.format(color))).convert_alpha()
         elif self.piece == Piece.ROOK:
-            return pygame.image(os.path.join('..', 'resources', '{}Rook.png'.format(color)))
+            return pygame.image.load(os.path.join('..', 'resources', '{}Rook.png'.format(color))).convert_alpha()
         elif self.piece == Piece.QUEEN:
-            return pygame.image(os.path.join('..', 'resources', '{}Queen.png'.format(color)))
+            return pygame.image.load(os.path.join('..', 'resources', '{}Queen.png'.format(color))).convert_alpha()
         elif self.piece == Piece.KING:
-            return pygame.image(os.path.join('..', 'resources', '{}King.png'.format(color)))
+            return pygame.image.load(os.path.join('..', 'resources', '{}King.png'.format(color))).convert_alpha()
     
+    def draw_piece(self, board):
+        board.board_surface.blit(self.image, (self.attached_square.pos.x, self.attached_square.pos.y))
+
+    #Piece Moves -----------------------------------------
     def pawn_moves(self, board):
         pass
     
