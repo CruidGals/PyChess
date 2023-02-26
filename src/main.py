@@ -1,5 +1,5 @@
 import pygame
-from board import Board, Square
+from board import *
 from sys import exit
 
 class GameLogic:
