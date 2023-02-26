@@ -1,6 +1,7 @@
 import pygame
 from pygame import Vector2
 import numpy as np
+from piece import *
 
 class Board:
 
@@ -27,12 +28,19 @@ class Board:
         self.board = np.array(board)
         self.board_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8))
 
+        self.pieces = np.array([])
+        self.piece_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8))
+
     
     def draw_board(self, screen):
         for square in self.board.ravel():
             square.draw_square(self.board_surface)
         screen.blit(self.board_surface, (0,0))
 
+    def draw_pieces(self, screen):
+        for piece in self.board.ravel():
+            piece.draw_piece(self.board_surface)
+        screen.blit(self.board_surface, (0,0))
 class Square:
 
     LIGHT_SQUARE_COLOR = pygame.color.Color(238, 238, 213)
