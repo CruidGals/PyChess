@@ -8,20 +8,22 @@ class GameLogic:
         self.fen_str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
         self.fen_decoder = FenDecoder(self.fen_str)
-        self.board = Board()
+        self.board = Board(self.fen_decoder.piece_placement)
     
     def draw_elements(self, screen):
         self.board.draw_board(screen)
+        self.board.draw_pieces(screen)
 
 def main():
     pygame.init()
-    game = GameLogic()
 
     #Chess board has 8 squares. 1 & a start at bottom left rook, 8 & h at top right black rook
     cell_size = Board.CELL_SIZE
     screen = pygame.display.set_mode((8 * cell_size, 8 * cell_size))
     pygame.display.set_caption('Chess')
     clock = pygame.time.Clock()
+
+    game = GameLogic()
 
     running = True
     while running:

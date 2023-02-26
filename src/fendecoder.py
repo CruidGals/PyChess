@@ -13,7 +13,8 @@ class FenDecoder:
             row = []
             for piece in pieces:
                 if piece.isnumeric():
-                    row.append(['' for i in range(int(piece))])
+                    for i in range(int(piece)):
+                        row.append('')
                     continue
                 
                 color = Piece.WHITE if piece.isupper() else Piece.BLACK
@@ -34,5 +35,3 @@ class FenDecoder:
         self.en_passant_square = fields[3]
         self.half_move_counter = int(fields[4])
         self.full_move_counter = int(fields[5])
-
-        print(self.piece_placement)
