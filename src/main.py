@@ -1,9 +1,13 @@
 import pygame
 from board import *
+from fendecoder import FenDecoder
 from sys import exit
 
 class GameLogic:
     def __init__(self):
+        self.fen_str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+
+        self.fen_decoder = FenDecoder(self.fen_str)
         self.board = Board()
     
     def draw_elements(self, screen):
