@@ -1,14 +1,16 @@
 import pygame
 from board import *
+from gamelogic import GameLogic
 from fendecoder import FenDecoder
 from sys import exit
 
-class GameLogic:
+class Game:
     def __init__(self):
         self.fen_str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
         self.fen_decoder = FenDecoder(self.fen_str)
         self.board = Board(self.fen_decoder.piece_placement)
+        self.logic = GameLogic(self.board.pieces)
     
     def draw_elements(self, screen):
         self.board.draw_board(screen)
@@ -23,7 +25,7 @@ def main():
     pygame.display.set_caption('Chess')
     clock = pygame.time.Clock()
 
-    game = GameLogic()
+    game = Game()
 
     running = True
     while running:

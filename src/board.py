@@ -35,7 +35,6 @@ class Board:
         self.board_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8))
 
         self.pieces = np.array(pieces)
-        print(self.pieces)
         self.piece_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8), pygame.SRCALPHA, 32)
 
     
@@ -102,22 +101,3 @@ class Piece:
     
     def draw_piece(self, board: Board):
         board.blit(self.image, (self.attached_square.pos.x, self.attached_square.pos.y))
-
-    #Piece Moves -----------------------------------------
-    def pawn_moves(self, board):
-        pass
-    
-    def knight_moves(self, board):
-        pass
-
-    def bishop_moves(self, board):
-        pass
-
-    def rook_moves(self, board):
-        pass
-
-    def queen_moves(self, board):
-        pass
-
-    def king_moves(self, board):
-        pass
