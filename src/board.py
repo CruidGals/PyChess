@@ -22,7 +22,7 @@ class Board:
                 square = Square(square_color, Vector2(x_pos * Board.CELL_SIZE, y_pos * Board.CELL_SIZE), square_notation)
                 square_row.append(square)
 
-                piece = piece_placement[7 - y_pos][x_pos]
+                piece = piece_placement[y_pos][x_pos]
                 piece_row.append(Piece(square, piece[0], piece[1])) if piece != '' else piece_row.append('')
                 
                 #Switches square color each time
@@ -71,12 +71,13 @@ class Square:
 class Piece:
 
     #constant vars
-    PAWN = 0
-    KNIGHT = 1
-    BISHOP = 2
-    ROOK = 3
-    QUEEN = 4
-    KING = 5
+    NO_PIECE = 0
+    PAWN = 1
+    KNIGHT = 2
+    BISHOP = 3
+    ROOK = 4
+    QUEEN = 5
+    KING = 6
 
     WHITE = 8
     BLACK = 16
@@ -104,6 +105,10 @@ class Piece:
             self.image = pygame.image.load(os.path.join('..', 'resources', '{}King.png'.format(color))).convert_alpha()
         
         self.image = pygame.transform.smoothscale(self.image, (Board.CELL_SIZE, Board.CELL_SIZE))
-    
+
     def draw_piece(self, board: Board):
         board.blit(self.image, (self.attached_square.pos.x, self.attached_square.pos.y))
+
+    @staticmethod
+    def opposite_color(color):
+        return Piece.WHITE if color == Piece.BLACK else Piece.BLACK
