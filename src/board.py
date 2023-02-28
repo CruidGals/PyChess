@@ -18,7 +18,7 @@ class Board:
             piece_row = []
             for x_pos, file in enumerate(range(ord('a'), ord('h') + 1)):
 
-                square_notation = '{}{}'.format(str(rank), chr(file))
+                square_notation = '{}{}'.format(chr(file), str(rank))
                 square = Square(square_color, Vector2(x_pos * Board.CELL_SIZE, y_pos * Board.CELL_SIZE), square_notation)
                 square_row.append(square)
 
@@ -37,7 +37,10 @@ class Board:
         self.pieces = np.array(pieces)
         self.piece_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8), pygame.SRCALPHA, 32)
 
-    
+    #Retrieve square from code (ie a1, e2)
+    def retrieve_square(self, code):
+        return self.board[8 - int(code[1:])][ord(code[:1]) - 97]
+
     def draw_board(self, screen):
         for square in self.board.ravel():
             square.draw_square(self.board_surface)
@@ -57,6 +60,9 @@ class Square:
         self.color = color
         self.pos = position
         self.notation = notation
+    
+    def __str__(self):
+        return self.notation
 
     def draw_square(self, board) -> None:
         square_rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
