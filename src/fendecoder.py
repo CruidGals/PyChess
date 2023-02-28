@@ -14,7 +14,7 @@ class FenDecoder:
             for piece in pieces:
                 if piece.isnumeric():
                     for i in range(int(piece)):
-                        row.append('')
+                        row.append((Piece.NO_PIECE, Piece.WHITE))
                     continue
                 
                 color = Piece.WHITE if piece.isupper() else Piece.BLACK
@@ -28,7 +28,6 @@ class FenDecoder:
                 elif piece == 'k': row.append((Piece.KING, color))
             
             self.piece_placement.append(row)
-
 
         self.side_to_move = fields[1]
         self.castling_ability = fields[2]

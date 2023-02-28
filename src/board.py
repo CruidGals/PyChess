@@ -23,7 +23,7 @@ class Board:
                 square_row.append(square)
 
                 piece = piece_placement[y_pos][x_pos]
-                piece_row.append(Piece(square, piece[0], piece[1])) if piece != '' else piece_row.append('')
+                piece_row.append(Piece(square, piece[0], piece[1]))
                 
                 #Switches square color each time
                 if x_pos == 7: break #makes sure colors alternate each row
@@ -103,10 +103,14 @@ class Piece:
             self.image = pygame.image.load(os.path.join('..', 'resources', '{}Queen.png'.format(color))).convert_alpha()
         elif self.piece == Piece.KING:
             self.image = pygame.image.load(os.path.join('..', 'resources', '{}King.png'.format(color))).convert_alpha()
+        else:
+            #Just put a filler picture here
+            self.image = pygame.image.load(os.path.join('..', 'resources', '{}Pawn.png'.format(color))).convert_alpha()
         
         self.image = pygame.transform.smoothscale(self.image, (Board.CELL_SIZE, Board.CELL_SIZE))
 
     def draw_piece(self, board: Board):
+        if self.piece == Piece.NO_PIECE: return
         board.blit(self.image, (self.attached_square.pos.x, self.attached_square.pos.y))
 
     @staticmethod
