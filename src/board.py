@@ -81,6 +81,7 @@ class Piece:
 
     WHITE = 8
     BLACK = 16
+    NO_COLOR = 24
 
     def __init__(self, square: Square, piece_type, color) -> None:
         self.color = color
