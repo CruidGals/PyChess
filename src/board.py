@@ -116,4 +116,9 @@ class Piece:
 
     @staticmethod
     def opposite_color(color):
-        return Piece.WHITE if color == Piece.BLACK else Piece.BLACK
+        if color == Piece.WHITE:
+            return Piece.BLACK
+        elif color == Piece.BLACK:
+            return Piece.WHITE
+        else:
+            return Piece.NO_COLOR
