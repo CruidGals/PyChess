@@ -25,13 +25,16 @@ class GameLogic:
                 continue
             
             if i == 0 and self.piece_placement[row + direction][col].piece == Piece.NO_PIECE:
-                range_of_motion.append(self.piece_placement[row + direction][col].attached_square)
+                if self.test_move((row, col), (row + direction, col), piece.color): 
+                    range_of_motion.append(self.piece_placement[row + direction][col].attached_square)
 
                 #Checking double move:
                 if (row == 1 and piece.color == Piece.BLACK) or (row == 6 and piece.color == Piece.WHITE) and self.piece_placement[row + (2 * direction)][col].piece == Piece.NO_PIECE:
-                    range_of_motion.append(self.piece_placement[row + (2 * direction)][col].attached_square)
+                    if self.test_move((row, col), (row + (2 * direction), col), piece.color):
+                        range_of_motion.append(self.piece_placement[row + (2 * direction)][col].attached_square)
             elif self.piece_placement[row + direction][col + i].color == Piece.opposite_color(piece.color):
-                range_of_motion.append(self.piece_placement[row + direction][col + i].attached_square)
+                if self.test_move((row, col), (row + direction, col + i), piece.color):
+                    range_of_motion.append(self.piece_placement[row + direction][col + i].attached_square)
         
         return range_of_motion
     
@@ -50,17 +53,18 @@ class GameLogic:
     def king_moves(self, piece):
         pass
 
-    def is_checked(self, king: Piece, scenario) -> bool:
-        color = king.color
-        row = np.argwhere(scenario == king)[0][0]
-        col = np.argwhere(scenario == king)[0][1]
+    def is_checked(self, color, ignore_piece: Piece | None) -> bool:
+        king = self.white_king if color == Piece.WHITE else self.black_king
+        row = np.argwhere(self.piece_placement == king)[0][0]
+        col = np.argwhere(self.piece_placement == king)[0][1]
 
         #Check vertical: negative means up, positive means down
         for direction in range(-1, 2, 2):
             for i in range(direction, direction * 8, direction):
-                if not self.within_bounds(row + i, col): break
+                if not GameLogic.within_bounds(row + i, col): break
 
-                targeted_piece = scenario[row + i][col]
+                targeted_piece = self.piece_placement[row + i][col]
+                if targeted_piece == ignore_piece: break
 
                 if targeted_piece.color == color:
                     break
@@ -78,9 +82,10 @@ class GameLogic:
                     dx = i * x_dir
                     dy = i * y_dir
 
-                    if not self.within_bounds(row + dy, col + dx): break
+                    if not GameLogic.within_bounds(row + dy, col + dx): break
 
-                    targeted_piece = scenario[row + dy][col + dx]
+                    targeted_piece = self.piece_placement[row + dy][col + dx]
+                    if targeted_piece == ignore_piece: break
 
                     if targeted_piece.color == color:
                         break
@@ -102,19 +107,40 @@ class GameLogic:
         #Check for knights: go on each diagnoal, then check outer sides of each diagonal
         for x_dir in range(-1, 2, 2):
             for y_dir in range(-1, 2, 2):
-                if self.within_bounds(row + y_dir * 2, col + x_dir):
-                    targeted_piece = scenario[row + y_dir * 2][col + x_dir]
+                if GameLogic.within_bounds(row + y_dir * 2, col + x_dir):
+                    targeted_piece = self.piece_placement[row + y_dir * 2][col + x_dir]
+                    if targeted_piece == ignore_piece: break
                     if targeted_piece.color == Piece.opposite_color(color) and targeted_piece.piece == Piece.KNIGHT:
                         return True
                 
-                if self.within_bounds(row + y_dir, col + x_dir * 2):
-                    targeted_piece = scenario[row + y_dir][col + x_dir * 2]
+                if GameLogic.within_bounds(row + y_dir, col + x_dir * 2):
+                    targeted_piece = self.piece_placement[row + y_dir][col + x_dir * 2]
+                    if targeted_piece == ignore_piece: break
                     if targeted_piece.color == Piece.opposite_color(color) and targeted_piece.piece == Piece.KNIGHT:
                         return True
         
         return False
-                       
-    def within_bounds(self, x, y) -> bool:
+
+    def test_move(self, original_coords, new_coords, color):
+        orig_piece = self.piece_placement[original_coords[0]][original_coords[1]]
+        target_piece = self.piece_placement[new_coords[0]][new_coords[1]]
+        status = False
+        ignore_piece = None
+
+        #Ignore piece used to ignore the piece that is being swapped that would be removed from the board
+        if target_piece.color == Piece.opposite_color(color):
+            ignore_piece = target_piece
+
+        orig_piece, target_piece = target_piece, orig_piece
+        if not self.is_checked(color, ignore_piece):
+            status = True
+        orig_piece, target_piece = target_piece, orig_piece
+
+        return status
+
+
+    @staticmethod               
+    def within_bounds(x, y) -> bool:
         if x < 0 or x > 7 or y < 0 or y > 7:
             return False
         else:
