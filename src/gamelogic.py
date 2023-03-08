@@ -38,20 +38,41 @@ class GameLogic:
         
         return range_of_motion
     
-    def knight_moves(self, piece):
-        pass
+    def knight_moves(self, piece: Piece):
+        row = np.argwhere(self.piece_placement == piece)[0][0]
+        col = np.argwhere(self.piece_placement == piece)[0][1]
+        range_of_motion = []
+
+        for x_dir in range(-1, 2, 2):
+            for y_dir in range(-1, 2, 2):
+                if GameLogic.within_bounds(row + y_dir * 2, col + x_dir):
+                    targeted_piece = self.piece_placement[row + y_dir * 2][col + x_dir]
+                    if self.test_move((row, col), (row + y_dir * 2, col + x_dir), piece.color):
+                        range_of_motion.append()
+                
+                if GameLogic.within_bounds(row + y_dir, col + x_dir * 2):
+                    targeted_piece = self.piece_placement[row + y_dir][col + x_dir * 2]
+                    
 
     def bishop_moves(self, piece):
-        pass
+        row = np.argwhere(self.piece_placement == piece)[0][0]
+        col = np.argwhere(self.piece_placement == piece)[0][1]
+        range_of_motion = []
 
     def rook_moves(self, piece):
-        pass
+        row = np.argwhere(self.piece_placement == piece)[0][0]
+        col = np.argwhere(self.piece_placement == piece)[0][1]
+        range_of_motion = []
 
     def queen_moves(self, piece):
-        pass
+        row = np.argwhere(self.piece_placement == piece)[0][0]
+        col = np.argwhere(self.piece_placement == piece)[0][1]
+        range_of_motion = []
 
     def king_moves(self, piece):
-        pass
+        row = np.argwhere(self.piece_placement == piece)[0][0]
+        col = np.argwhere(self.piece_placement == piece)[0][1]
+        range_of_motion = []
 
     def is_checked(self, color, ignore_piece: Piece | None) -> bool:
         king = self.white_king if color == Piece.WHITE else self.black_king
