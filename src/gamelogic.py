@@ -6,6 +6,8 @@ from board import Piece
 class GameLogic:
     def __init__(self, piece_placement):
         self.piece_placement = piece_placement
+        self.white_king = None
+        self.black_king = None
 
         #Noting king positions
         for piece in piece_placement.ravel():
@@ -62,10 +64,24 @@ class GameLogic:
         return range_of_motion
                     
 
-    def bishop_moves(self, piece):
+    def bishop_moves(self, piece: Piece):
         row = np.argwhere(self.piece_placement == piece)[0][0]
         col = np.argwhere(self.piece_placement == piece)[0][1]
         range_of_motion = []
+
+        for dx in range(-1, 2, 2):
+            for dy in range(-1, 2, 2):
+                for i in range(1, 8):
+                    if GameLogic.within_bounds(row + (i * dy), col + (i * dx)):
+                        targeted_piece = self.piece_placement[row + (i * dy)][col + (i * dx)]
+                        
+                        if targeted_piece.color == piece.color:
+                            break
+                        else:
+                            if self.test_move((row, col), (row + (i * dy), col + (i * dx)), piece.color):
+                                range_of_motion.append(targeted_piece.attached_square)
+        
+        return range_of_motion
 
     def rook_moves(self, piece):
         row = np.argwhere(self.piece_placement == piece)[0][0]
@@ -83,6 +99,8 @@ class GameLogic:
         range_of_motion = []
 
     def is_checked(self, color, ignore_piece: Piece | None) -> bool:
+        if self.white_king == None or self.black_king == None: return False
+
         king = self.white_king if color == Piece.WHITE else self.black_king
         row = np.argwhere(self.piece_placement == king)[0][0]
         col = np.argwhere(self.piece_placement == king)[0][1]
