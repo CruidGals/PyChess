@@ -71,14 +71,15 @@ class GameLogic:
         for dx in range(-1, 2, 2):
             for dy in range(-1, 2, 2):
                 for i in range(1, 8):
-                    if GameLogic.within_bounds(row + (i * dy), col + (i * dx)):
-                        targeted_piece = self.piece_placement[row + (i * dy)][col + (i * dx)]
-                        
-                        if targeted_piece.color == piece.color:
-                            break
-                        else:
-                            if self.test_move((row, col), (row + (i * dy), col + (i * dx)), piece.color):
-                                range_of_motion.append(targeted_piece.attached_square)
+                    if not GameLogic.within_bounds(row + (i * dy), col + (i * dx)): break
+                    
+                    targeted_piece = self.piece_placement[row + (i * dy)][col + (i * dx)]
+                    
+                    if targeted_piece.color == piece.color:
+                        break
+                    else:
+                        if self.test_move((row, col), (row + (i * dy), col + (i * dx)), piece.color):
+                            range_of_motion.append(targeted_piece.attached_square)
         
         return range_of_motion
 
@@ -86,6 +87,34 @@ class GameLogic:
         row = np.argwhere(self.piece_placement == piece)[0][0]
         col = np.argwhere(self.piece_placement == piece)[0][1]
         range_of_motion = []
+
+        #Check vertically
+        for dir in range(-1, 2, 2):
+            for i in range(1,8):
+                if not GameLogic.within_bounds(row + i * dir, col): break
+
+                targeted_square = self.piece_placement[row + i * dir][col]
+
+                if targeted_square.color == piece.color:
+                    break
+                else:
+                    if self.test_move((row, col), (row + i * dir, col), piece.color):
+                        range_of_motion.append(targeted_square.attached_square)
+
+        #Check Horizontally
+        for dir in range(-1, 2, 2):
+            for i in range(1,8):
+                if not GameLogic.within_bounds(row, col + i * dir): break
+
+                targeted_square = self.piece_placement[row][col + i * dir]
+
+                if targeted_square.color == piece.color:
+                    break
+                else:
+                    if self.test_move((row, col), (row, col + i * dir), piece.color):
+                        range_of_motion.append(targeted_square.attached_square)
+        
+        return range_of_motion
 
     def queen_moves(self, piece):
         row = np.argwhere(self.piece_placement == piece)[0][0]
