@@ -126,9 +126,14 @@ class GameLogic:
         return range_of_motion
 
     def queen_moves(self, piece):
-        row = np.argwhere(self.piece_placement == piece)[0][0]
-        col = np.argwhere(self.piece_placement == piece)[0][1]
         range_of_motion = []
+
+        for square in self.bishop_moves(piece):
+            range_of_motion.append(square)
+        for square in self.rook_moves(piece):
+            range_of_motion.append(square)
+        
+        return range_of_motion
 
     def king_moves(self, piece):
         row = np.argwhere(self.piece_placement == piece)[0][0]
