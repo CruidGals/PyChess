@@ -50,20 +50,19 @@ class GameLogic:
                 if GameLogic.within_bounds(row + y_dir * 2, col + x_dir):
                     targeted_piece = self.piece_placement[row + y_dir * 2][col + x_dir]
 
-                    if targeted_piece.color == Piece.opposite_color(piece.color) or targeted_piece.color == Piece.NO_COLOR:
+                    if targeted_piece.color != piece.color:
                         if self.test_move((row, col), (row + y_dir * 2, col + x_dir), piece.color):
                             range_of_motion.append(targeted_piece.attached_square)
 
                 if GameLogic.within_bounds(row + y_dir, col + x_dir * 2):
                     targeted_piece = self.piece_placement[row + y_dir][col + x_dir * 2]
 
-                    if targeted_piece.color == Piece.opposite_color(piece.color) or targeted_piece.color == Piece.NO_COLOR:
+                    if targeted_piece.color != piece.color:
                         if self.test_move((row, col), (row + y_dir, col + x_dir * 2), piece.color):
                             range_of_motion.append(targeted_piece.attached_square)
             
         return range_of_motion
                     
-
     def bishop_moves(self, piece: Piece):
         row = np.argwhere(self.piece_placement == piece)[0][0]
         col = np.argwhere(self.piece_placement == piece)[0][1]
