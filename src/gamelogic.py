@@ -80,10 +80,13 @@ class GameLogic:
                     else:
                         if self.test_move((row, col), (row + (i * dy), col + (i * dx)), piece.color):
                             range_of_motion.append(targeted_piece.attached_square)
+                        
+                        if targeted_piece.color == Piece.opposite_color(piece.color):
+                            break
         
         return range_of_motion
 
-    def rook_moves(self, piece):
+    def rook_moves(self, piece: Piece):
         row = np.argwhere(self.piece_placement == piece)[0][0]
         col = np.argwhere(self.piece_placement == piece)[0][1]
         range_of_motion = []
@@ -93,26 +96,32 @@ class GameLogic:
             for i in range(1,8):
                 if not GameLogic.within_bounds(row + i * dir, col): break
 
-                targeted_square = self.piece_placement[row + i * dir][col]
+                targeted_piece = self.piece_placement[row + i * dir][col]
 
-                if targeted_square.color == piece.color:
+                if targeted_piece.color == piece.color:
                     break
                 else:
                     if self.test_move((row, col), (row + i * dir, col), piece.color):
-                        range_of_motion.append(targeted_square.attached_square)
+                        range_of_motion.append(targeted_piece.attached_square)
+                    
+                    if targeted_piece.color == Piece.opposite_color(piece.color):
+                            break
 
         #Check Horizontally
         for dir in range(-1, 2, 2):
             for i in range(1,8):
                 if not GameLogic.within_bounds(row, col + i * dir): break
 
-                targeted_square = self.piece_placement[row][col + i * dir]
+                targeted_piece = self.piece_placement[row][col + i * dir]
 
-                if targeted_square.color == piece.color:
+                if targeted_piece.color == piece.color:
                     break
                 else:
                     if self.test_move((row, col), (row, col + i * dir), piece.color):
-                        range_of_motion.append(targeted_square.attached_square)
+                        range_of_motion.append(targeted_piece.attached_square)
+                    
+                    if targeted_piece.color == Piece.opposite_color(piece.color):
+                            break
         
         return range_of_motion
 
