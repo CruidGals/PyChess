@@ -15,6 +15,16 @@ class GameLogic:
                 if piece.color == Piece.WHITE: self.white_king = piece
                 else: self.black_king = piece
     
+    def piece_moves(self, piece: Piece):
+        piece_type = piece.piece
+        
+        if piece_type == Piece.PAWN: return self.pawn_moves(piece)
+        elif piece_type == Piece.KNIGHT: return self.knight_moves(piece)
+        elif piece_type == Piece.BISHOP: return self.bishop_moves(piece)
+        elif piece_type == Piece.ROOK: return self.rook_moves(piece)
+        elif piece_type == Piece.QUEEN: return self.queen_moves(piece)
+        elif piece_type == Piece.KING: return self.king_moves(piece)
+
     #Piece Moves -----------------------------------------
     def pawn_moves(self, piece: Piece):
         row = np.argwhere(self.piece_placement == piece)[0][0]
@@ -253,8 +263,7 @@ class GameLogic:
         orig_piece, target_piece = target_piece, orig_piece
 
         return status
-
-
+    #------------------------------------------------------
     @staticmethod               
     def within_bounds(x, y) -> bool:
         if x < 0 or x > 7 or y < 0 or y > 7:
