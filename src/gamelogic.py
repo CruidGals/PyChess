@@ -26,14 +26,15 @@ class GameLogic:
             if not self.within_bounds(row + direction, col + i):
                 continue
             
-            if i == 0 and self.piece_placement[row + direction][col].piece == Piece.NO_PIECE:
-                if self.test_move((row, col), (row + direction, col), piece.color): 
-                    range_of_motion.append(self.piece_placement[row + direction][col].attached_square)
+            if i == 0:
+                if self.piece_placement[row + direction][col].piece == Piece.NO_PIECE:
+                    if self.test_move((row, col), (row + direction, col), piece.color): 
+                        range_of_motion.append(self.piece_placement[row + direction][col].attached_square)
 
-                #Checking double move:
-                if (row == 1 and piece.color == Piece.BLACK) or (row == 6 and piece.color == Piece.WHITE) and self.piece_placement[row + (2 * direction)][col].piece == Piece.NO_PIECE:
-                    if self.test_move((row, col), (row + (2 * direction), col), piece.color):
-                        range_of_motion.append(self.piece_placement[row + (2 * direction)][col].attached_square)
+                    #Checking double move:
+                    if (row == 1 and piece.color == Piece.BLACK) or (row == 6 and piece.color == Piece.WHITE) and self.piece_placement[row + (2 * direction)][col].piece == Piece.NO_PIECE:
+                        if self.test_move((row, col), (row + (2 * direction), col), piece.color):
+                            range_of_motion.append(self.piece_placement[row + (2 * direction)][col].attached_square)
             elif self.piece_placement[row + direction][col + i].color == Piece.opposite_color(piece.color):
                 if self.test_move((row, col), (row + direction, col + i), piece.color):
                     range_of_motion.append(self.piece_placement[row + direction][col + i].attached_square)
@@ -140,13 +141,34 @@ class GameLogic:
         col = np.argwhere(self.piece_placement == piece)[0][1]
         range_of_motion = []
 
-    def is_checked(self, color, ignore_piece: Piece | None) -> bool:
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                if (dx == 0 and dy == 0) or not GameLogic.within_bounds(row + dy, col + dx): continue
+
+                targeted_piece = self.piece_placement[row + dy][col + dx]
+
+                if targeted_piece.color == piece.color:
+                    continue
+                else:
+                    if self.test_move((row, col), (row + dy, col + dx), piece.color):
+                        range_of_motion.append(targeted_piece.attached_square)
+                    
+                    if targeted_piece.color == Piece.opposite_color(piece.color):
+                        continue
+        
+        return range_of_motion
+
+    def is_checked(self, color, ignore_piece: Piece | None, king_coords: tuple | None) -> bool:
         if self.white_king == None or self.black_king == None: return False
 
         king = self.white_king if color == Piece.WHITE else self.black_king
         row = np.argwhere(self.piece_placement == king)[0][0]
         col = np.argwhere(self.piece_placement == king)[0][1]
 
+        if king_coords != None:
+            row = king_coords[0]
+            col = king_coords[1]
+ 
         #Check vertical: negative means up, positive means down
         for direction in range(-1, 2, 2):
             for i in range(direction, direction * 8, direction):
@@ -180,10 +202,9 @@ class GameLogic:
                         break
                     elif targeted_piece.color == Piece.opposite_color(color):
                         #Check Pawn
-                        if dy == -1 and color == Piece.WHITE:
-                            return True         
-                        elif dy == 1 and color == Piece.BLACK:
-                            return True
+                        if targeted_piece == Piece.PAWN:
+                            if dy == -1 and color == Piece.WHITE: return True
+                            elif dy == 1 and color == Piece.BLACK : return True    
 
                         #Check Rook
                         if dy == 0 and targeted_piece.piece == Piece.ROOK:
@@ -215,13 +236,19 @@ class GameLogic:
         target_piece = self.piece_placement[new_coords[0]][new_coords[1]]
         status = False
         ignore_piece = None
+        king_coords = None
 
         #Ignore piece used to ignore the piece that is being swapped that would be removed from the board
         if target_piece.color == Piece.opposite_color(color):
             ignore_piece = target_piece
 
         orig_piece, target_piece = target_piece, orig_piece
-        if not self.is_checked(color, ignore_piece):
+        
+        #Checks if this function was called by king moves
+        if target_piece.piece == Piece.KING:
+            king_coords = (np.argwhere(self.piece_placement == orig_piece)[0][0], np.argwhere(self.piece_placement == orig_piece)[0][1])
+
+        if not self.is_checked(color, ignore_piece, king_coords):
             status = True
         orig_piece, target_piece = target_piece, orig_piece
 
