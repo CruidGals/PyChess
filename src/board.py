@@ -60,13 +60,13 @@ class Square:
         self.color = color
         self.pos = position
         self.notation = notation
+        self.rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
     
     def __str__(self):
         return self.notation
 
     def draw_square(self, board) -> None:
-        square_rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
-        pygame.draw.rect(board, self.color, square_rect)
+        pygame.draw.rect(board, self.color, self.rect)
 
 class Piece:
 
@@ -86,6 +86,7 @@ class Piece:
     def __init__(self, square: Square, piece_type, color) -> None:
         self.color = color
         self.attached_square = square
+        self.pos = Vector2(square.pos.x, square.pos.y)
         self.piece = piece_type
         self.initialize_image()
 
@@ -112,7 +113,7 @@ class Piece:
 
     def draw_piece(self, board: Board):
         if self.piece == Piece.NO_PIECE: return
-        board.blit(self.image, (self.attached_square.pos.x, self.attached_square.pos.y))
+        board.blit(self.image, (self.pos.x, self.pos.y))
 
     @staticmethod
     def opposite_color(color):
