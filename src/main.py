@@ -16,15 +16,21 @@ class Game:
         self.fen_decoder = FenDecoder(self.fen_str)
         self.board = Board(self.fen_decoder.piece_placement)
         self.logic = GameLogic(self.board.pieces)
+
+        self.held_piece = None
     
-    def click_square(self, pos):
-        square = [s for s in self.board.board.ravel() if s.rect.collidepoint(pos)]
-        print(square[0])
-        #To-Do: select piece / dragged piece
+    def select_piece(self, pos):
+        piece = ([p for p in self.board.pieces.ravel() if p.rect.collidepoint(pos)])[0]
+        if piece.piece != Piece.NO_PIECE: self.held_piece = piece
     
+    def drag_piece(self, pos):
+        if self.held_piece == None: return
+        self.held_piece.pos.x = pos[0] - (Board.CELL_SIZE // 2)
+        self.held_piece.pos.y = pos[1] - (Board.CELL_SIZE // 2)
+
     def release_piece(self, pos):
         #To-DO: if carrying piece, drop it at the desiired location
-        pass
+        self.held_piece = None
     
     def draw_elements(self, screen):
         self.board.draw_board(screen)
@@ -47,9 +53,11 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                game.click_square(pygame.mouse.get_pos())
+                game.select_piece(pygame.mouse.get_pos())
             if event.type == pygame.MOUSEBUTTONUP:
                 game.release_piece(pygame.mouse.get_pos())
+            if pygame.mouse.get_pressed()[0]:
+                game.drag_piece(pygame.mouse.get_pos())
         
         screen.fill('Beige')
         game.draw_elements(screen)
