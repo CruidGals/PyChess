@@ -23,7 +23,7 @@ class Board:
                 square_row.append(square)
 
                 piece = piece_placement[y_pos][x_pos]
-                piece_row.append(Piece(square, piece[0], piece[1]))
+                piece_row.append(Piece(square, piece[0], piece[1])) if piece != None else piece_row.append(None)
                 
                 #Switches square color each time
                 if x_pos == 7: break #makes sure colors alternate each row
@@ -35,7 +35,7 @@ class Board:
         self.board_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8))
 
         self.pieces = np.array(pieces)
-        self.pieces_list = pygame.sprite.Group(pieces)
+        self.pieces_list = pygame.sprite.Group(filter(None.__ne__(), pieces))
         self.piece_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8), pygame.SRCALPHA, 32)
 
     #Retrieve square from code (ie a1, e2)
@@ -70,7 +70,6 @@ class Square:
 class Piece(pygame.sprite.Sprite):
 
     #constant vars
-    NO_PIECE = 0
     PAWN = 1
     KNIGHT = 2
     BISHOP = 3
@@ -80,7 +79,6 @@ class Piece(pygame.sprite.Sprite):
 
     WHITE = 8
     BLACK = 16
-    NO_COLOR = 24
 
     def __init__(self, square: Square, piece_type, color) -> None:
         pygame.sprite.Sprite.__init__(self)
@@ -108,21 +106,12 @@ class Piece(pygame.sprite.Sprite):
             self.image = pygame.image.load(os.path.join('..', 'resources', '{}Queen.png'.format(color))).convert_alpha()
         elif self.piece == Piece.KING:
             self.image = pygame.image.load(os.path.join('..', 'resources', '{}King.png'.format(color))).convert_alpha()
-        else:
-            #Just put a filler picture here
-            self.image = pygame.image.load(os.path.join('..', 'resources', '{}Pawn.png'.format(color))).convert_alpha()
         
         self.image = pygame.transform.smoothscale(self.image, (Board.CELL_SIZE, Board.CELL_SIZE))
 
     def draw_piece(self, board: Board):
-        if self.piece == Piece.NO_PIECE: return
         board.blit(self.image, (self.pos.x, self.pos.y))
 
     @staticmethod
     def opposite_color(color):
-        if color == Piece.WHITE:
-            return Piece.BLACK
-        elif color == Piece.BLACK:
-            return Piece.WHITE
-        else:
-            return Piece.NO_COLOR
+        return Piece.WHITE if color == Piece.BLACK else Piece.BLACK

@@ -10,7 +10,7 @@ class GameLogic:
         self.black_king = None
 
         #Noting king positions
-        for piece in piece_placement.ravel():
+        for piece in filter(None.__ne__, piece_placement.ravel()):
             if piece.piece == Piece.KING:
                 if piece.color == Piece.WHITE: self.white_king = piece
                 else: self.black_king = piece

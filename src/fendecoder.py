@@ -14,7 +14,7 @@ class FenDecoder:
             for piece in pieces:
                 if piece.isnumeric():
                     for i in range(int(piece)):
-                        row.append((Piece.NO_PIECE, Piece.NO_COLOR))
+                        row.append(None)
                     continue
                 
                 color = Piece.WHITE if piece.isupper() else Piece.BLACK
