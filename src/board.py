@@ -35,6 +35,7 @@ class Board:
         self.board_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8))
 
         self.pieces = np.array(pieces)
+        self.pieces_list = pygame.sprite.Group(pieces)
         self.piece_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8), pygame.SRCALPHA, 32)
 
     #Retrieve square from code (ie a1, e2)
@@ -47,9 +48,7 @@ class Board:
         screen.blit(self.board_surface, (0,0))
 
     def draw_pieces(self, screen):
-        for piece in self.pieces.ravel():
-            if piece != '': piece.draw_piece(self.piece_surface)
-        screen.blit(self.piece_surface, (0,0))
+        self.pieces_list.draw(screen)
 
 class Square:
 
@@ -68,7 +67,7 @@ class Square:
     def draw_square(self, board) -> None:
         pygame.draw.rect(board, self.color, self.rect)
 
-class Piece:
+class Piece(pygame.sprite.Sprite):
 
     #constant vars
     NO_PIECE = 0
@@ -84,10 +83,14 @@ class Piece:
     NO_COLOR = 24
 
     def __init__(self, square: Square, piece_type, color) -> None:
+        pygame.sprite.Sprite.__init__(self)
+        
         self.color = color
         self.attached_square = square
         self.pos = Vector2(square.pos.x, square.pos.y)
         self.piece = piece_type
+
+        self.rect = square.rect
         self.initialize_image()
 
     def initialize_image(self):
