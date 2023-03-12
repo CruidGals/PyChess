@@ -18,12 +18,13 @@ class Board:
             piece_row = []
             for x_pos, file in enumerate(range(ord('a'), ord('h') + 1)):
 
-                square_notation = '{}{}'.format(chr(file), str(rank))
-                square = Square(square_color, Vector2(x_pos * Board.CELL_SIZE, y_pos * Board.CELL_SIZE), square_notation)
-                square_row.append(square)
+                piece_param = piece_placement[y_pos][x_pos]
+                piece = Piece(Vector2(x_pos * Board.CELL_SIZE, y_pos * Board.CELL_SIZE), piece_param[0], piece_param[1]) if piece_param != None else None
+                if piece != None: piece_row.append(piece)
 
-                piece = piece_placement[y_pos][x_pos]
-                piece_row.append(Piece(square, piece[0], piece[1])) if piece != None else piece_row.append(None)
+                square_notation = '{}{}'.format(chr(file), str(rank))
+                square = Square(square_color, piece, Vector2(x_pos * Board.CELL_SIZE, y_pos * Board.CELL_SIZE), square_notation)
+                square_row.append(square)
                 
                 #Switches square color each time
                 if x_pos == 7: break #makes sure colors alternate each row
@@ -34,8 +35,7 @@ class Board:
         self.board = np.array(board)
         self.board_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8))
 
-        self.pieces = np.array(pieces)
-        self.pieces_list = pygame.sprite.Group(filter(None.__ne__(), pieces))
+        self.pieces_list = pygame.sprite.Group(pieces)
         self.piece_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8), pygame.SRCALPHA, 32)
 
     #Retrieve square from code (ie a1, e2)
@@ -55,9 +55,10 @@ class Square:
     LIGHT_SQUARE_COLOR = pygame.color.Color(238, 238, 213)
     DARK_SQUARE_COLOR = pygame.color.Color(125, 148, 93)
 
-    def __init__(self, color, position: Vector2, notation: str) -> None:
+    def __init__(self, color, piece, pos: Vector2, notation: str) -> None:
         self.color = color
-        self.pos = position
+        self.attached_piece = piece
+        self.pos = pos
         self.notation = notation
         self.rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
     
@@ -80,15 +81,14 @@ class Piece(pygame.sprite.Sprite):
     WHITE = 8
     BLACK = 16
 
-    def __init__(self, square: Square, piece_type, color) -> None:
+    def __init__(self, pos, piece_type, color) -> None:
         pygame.sprite.Sprite.__init__(self)
         
         self.color = color
-        self.attached_square = square
-        self.pos = Vector2(square.pos.x, square.pos.y)
+        self.pos = pos
         self.piece = piece_type
 
-        self.rect = square.rect
+        self.rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
         self.initialize_image()
 
     def initialize_image(self):
