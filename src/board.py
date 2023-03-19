@@ -80,6 +80,7 @@ class Piece(pygame.sprite.Sprite):
 
     WHITE = 8
     BLACK = 16
+    NO_COLOR = 24
 
     def __init__(self, pos, piece_type, color) -> None:
         pygame.sprite.Sprite.__init__(self)

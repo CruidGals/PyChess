@@ -51,7 +51,7 @@ class GameLogic:
                         range_of_motion.append(self.board[row + direction][col])
 
                     #Checking double move:
-                    if (row == 1 and piece.color == Piece.BLACK) or (row == 6 and piece.color == Piece.WHITE) and self.board[row + (2 * direction)][col] == None:
+                    if (row == 1 and piece.color == Piece.BLACK) or (row == 6 and piece.color == Piece.WHITE) and self.board[row + (2 * direction)][col].attached_piece == None:
                         if self.test_move((row, col), (row + (2 * direction), col), piece.color):
                             range_of_motion.append(self.board[row + (2 * direction)][col])
             elif self.board[row + direction][col + i].attached_piece != None and self.board[row + direction][col + i].attached_piece.color == Piece.opposite_color(piece.color):
@@ -97,15 +97,16 @@ class GameLogic:
                 for i in range(1, 8):
                     if not GameLogic.within_bounds(row + (i * dy), col + (i * dx)): break
                     
-                    targeted_piece = self.board[row + (i * dy)][col + (i * dx)]
-                    if targeted_piece == None: continue
+                    targeted_piece = self.board[row + (i * dy)][col + (i * dx)].attached_piece
+                    if targeted_piece == None and self.test_move((row, col), (row + (i * dy), col + (i * dx)), Piece.NO_COLOR):
+                        range_of_motion.append(self.board[row + (i * dy)][col + (i * dx)])
+                        continue
 
                     if targeted_piece.color == piece.color:
                         break
                     else:
                         if self.test_move((row, col), (row + (i * dy), col + (i * dx)), piece.color):
                             range_of_motion.append(self.board[row + (i * dy)][col + (i * dx)])
-                        
                         if targeted_piece.color == Piece.opposite_color(piece.color):
                             break
         
@@ -123,8 +124,10 @@ class GameLogic:
             for i in range(1,8):
                 if not GameLogic.within_bounds(row + i * dir, col): break
 
-                targeted_piece = self.board[row + i * dir][col]
-                if targeted_piece == None: continue
+                targeted_piece = self.board[row + i * dir][col].attached_piece
+                if targeted_piece == None and self.test_move((row, col), (row + i * dir, col), Piece.NO_COLOR):
+                    range_of_motion.append(self.board[row + i * dir][col])
+                    continue
                 
                 if targeted_piece.color == piece.color:
                     break
@@ -140,14 +143,16 @@ class GameLogic:
             for i in range(1,8):
                 if not GameLogic.within_bounds(row, col + i * dir): break
 
-                targeted_piece = self.board[row][col + i * dir]
-                if targeted_piece == None: continue
+                targeted_piece = self.board[row][col + i * dir].attached_piece
+                if targeted_piece == None and self.test_move((row, col), (row, col + i * dir), Piece.NO_COLOR):
+                    range_of_motion.append(self.board[row][col + i * dir])
+                    continue
                 
                 if targeted_piece.color == piece.color:
                     break
                 else:
                     if self.test_move((row, col), (row, col + i * dir), piece.color):
-                        range_of_motion.append(self.board[row + i * dir][col])
+                        range_of_motion.append(self.board[row][col + i * dir])
                     
                     if targeted_piece.color == Piece.opposite_color(piece.color):
                             break
@@ -175,8 +180,10 @@ class GameLogic:
             for dy in range(-1, 2):
                 if (dx == 0 and dy == 0) or not GameLogic.within_bounds(row + dy, col + dx): continue
 
-                targeted_piece = self.board[row + dy][col + dx]
-                if targeted_piece == None: continue
+                targeted_piece = self.board[row + dy][col + dx].attached_piece
+                if targeted_piece == None and self.test_move((row, col), (row + dy, col + dx), Piece.NO_COLOR):
+                    range_of_motion.append(self.board[row + dy][col + dx])
+                    continue
 
                 if targeted_piece.color == piece.color:
                     continue
@@ -203,9 +210,7 @@ class GameLogic:
         #Check vertical: negative means up, positive means down
         for direction in range(-1, 2, 2):
             for i in range(direction, direction * 8, direction):
-                if not GameLogic.within_bounds(row + i, col): break
-
-                if self.board[row + i][col] == ignore_square: continue
+                if not GameLogic.within_bounds(row + i, col) or self.board[row + i][col] == ignore_square: break
 
                 targeted_piece = self.board[row + i][col].attached_piece
                 if targeted_piece == None: continue
@@ -226,8 +231,7 @@ class GameLogic:
                     dx = i * x_dir
                     dy = i * y_dir
 
-                    if not GameLogic.within_bounds(row + dy, col + dx): break
-                    if self.board[row + dy][col + dx] == ignore_square: continue
+                    if not GameLogic.within_bounds(row + dy, col + dx) or self.board[row + dy][col + dx] == ignore_square: break
 
                     targeted_piece = self.board[row + dy][col + dx].attached_piece
                     if targeted_piece == None: continue
