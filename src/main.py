@@ -17,19 +17,29 @@ class Game:
         self.board = Board(self.fen_decoder.piece_placement)
         self.logic = GameLogic(self.board.board)
 
+        self.selected_square = None
         self.held_piece = None
     
     def select_piece(self, pos):
-        piece = ([p for p in self.board.pieces.ravel() if p.rect.collidepoint(pos)])[0]
-        if piece.piece != Piece.NO_PIECE: self.held_piece = piece
+        #probably make it select the piece itself, instead of square
+        square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
+        if square.attached_piece != None: 
+            self.selected_square = square
+            self.held_piece = square.attached_piece
     
     def drag_piece(self, pos):
         if self.held_piece == None: return
         self.held_piece.pos.x = pos[0] - (Board.CELL_SIZE // 2)
         self.held_piece.pos.y = pos[1] - (Board.CELL_SIZE // 2)
+        self.held_piece.update_rect()
 
     def release_piece(self, pos):
-        #To-DO: if carrying piece, drop it at the desiired location
+        #TO-DO add so that the piece can be dropped onto a diff square, but only the valid squares it can go on
+        self.held_piece.pos.x = self.selected_square.pos.x
+        self.held_piece.pos.y = self.selected_square.pos.y
+        self.held_piece.update_rect()
+
+        self.selected_square = None
         self.held_piece = None
     
     def draw_elements(self, screen):

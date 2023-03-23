@@ -110,8 +110,8 @@ class Piece(pygame.sprite.Sprite):
         
         self.image = pygame.transform.smoothscale(self.image, (Board.CELL_SIZE, Board.CELL_SIZE))
 
-    def draw_piece(self, board: Board):
-        board.blit(self.image, (self.pos.x, self.pos.y))
+    def update_rect(self):
+        self.rect.update(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
 
     @staticmethod
     def opposite_color(color):
