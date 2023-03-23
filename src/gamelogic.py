@@ -22,7 +22,7 @@ class GameLogic:
     
     def piece_moves(self, square: Square):
         piece = square.attached_piece
-        if piece == None: return
+        if piece == None: return []
 
         if piece.piece == Piece.PAWN: return self.pawn_moves(square)
         elif piece.piece == Piece.KNIGHT: return self.knight_moves(square)
@@ -181,8 +181,9 @@ class GameLogic:
                 if (dx == 0 and dy == 0) or not GameLogic.within_bounds(row + dy, col + dx): continue
 
                 targeted_piece = self.board[row + dy][col + dx].attached_piece
-                if targeted_piece == None and self.test_move((row, col), (row + dy, col + dx), Piece.NO_COLOR):
-                    range_of_motion.append(self.board[row + dy][col + dx])
+                if targeted_piece == None:
+                    if self.test_move((row, col), (row + dy, col + dx), piece.color):
+                        range_of_motion.append(self.board[row + dy][col + dx])
                     continue
 
                 if targeted_piece.color == piece.color:
@@ -206,7 +207,7 @@ class GameLogic:
         if king_coords != None:
             row = king_coords[0]
             col = king_coords[1]
- 
+
         #Check vertical: negative means up, positive means down
         for direction in range(-1, 2, 2):
             for i in range(direction, direction * 8, direction):
@@ -214,7 +215,7 @@ class GameLogic:
 
                 targeted_piece = self.board[row + i][col].attached_piece
                 if targeted_piece == None: continue
-
+                
                 if targeted_piece.color == color:
                     break
                 elif targeted_piece.color == Piece.opposite_color(color):
@@ -256,7 +257,6 @@ class GameLogic:
         for x_dir in range(-1, 2, 2):
             for y_dir in range(-1, 2, 2):
                 if GameLogic.within_bounds(row + y_dir * 2, col + x_dir):
-
                     if self.board[row + y_dir * 2][col + x_dir] == ignore_square: break
                     targeted_piece = self.board[row + y_dir * 2][col + x_dir].attached_piece
 
@@ -266,7 +266,7 @@ class GameLogic:
                 
                 if GameLogic.within_bounds(row + y_dir, col + x_dir * 2):
                     
-                    if self.board[row + y_dir * 2][col + x_dir] == ignore_square: break
+                    if self.board[row + y_dir][col + x_dir * 2] == ignore_square: break
                     targeted_piece = self.board[row + y_dir][col + x_dir * 2].attached_piece
                     
                     if targeted_piece != None:
@@ -287,9 +287,9 @@ class GameLogic:
             if target_square.attached_piece.color == Piece.opposite_color(color):
                 ignore_square = target_square
 
-            #Checks if this function was called by king moves
-            if orig_square.attached_piece.piece == Piece.KING:
-                king_coords = (np.argwhere(self.board == target_square)[0][0], np.argwhere(self.board == target_square)[0][1])
+        #Checks if this function was called by king moves
+        if orig_square.attached_piece.piece == Piece.KING:
+            king_coords = (np.argwhere(self.board == target_square)[0][0], np.argwhere(self.board == target_square)[0][1])
 
         orig_square, target_square = target_square, orig_square
         

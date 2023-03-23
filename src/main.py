@@ -15,7 +15,7 @@ class Game:
 
         self.fen_decoder = FenDecoder(self.fen_str)
         self.board = Board(self.fen_decoder.piece_placement)
-        self.logic = GameLogic(self.board.pieces)
+        self.logic = GameLogic(self.board.board)
 
         self.held_piece = None
     
