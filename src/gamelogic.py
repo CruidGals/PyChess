@@ -23,7 +23,7 @@ class GameLogic:
     def piece_moves(self, square: Square):
         piece = square.attached_piece
         if piece == None: return []
-
+        
         if piece.piece == Piece.PAWN: return self.pawn_moves(square)
         elif piece.piece == Piece.KNIGHT: return self.knight_moves(square)
         elif piece.piece == Piece.BISHOP: return self.bishop_moves(square)
@@ -98,8 +98,9 @@ class GameLogic:
                     if not GameLogic.within_bounds(row + (i * dy), col + (i * dx)): break
                     
                     targeted_piece = self.board[row + (i * dy)][col + (i * dx)].attached_piece
-                    if targeted_piece == None and self.test_move((row, col), (row + (i * dy), col + (i * dx)), Piece.NO_COLOR):
-                        range_of_motion.append(self.board[row + (i * dy)][col + (i * dx)])
+                    if targeted_piece == None:
+                        if self.test_move((row, col), (row + (i * dy), col + (i * dx)), Piece.NO_COLOR):
+                            range_of_motion.append(self.board[row + (i * dy)][col + (i * dx)])
                         continue
 
                     if targeted_piece.color == piece.color:

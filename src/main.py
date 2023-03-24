@@ -19,13 +19,17 @@ class Game:
 
         self.selected_square = None
         self.held_piece = None
+        self.movable_squares = []
     
     def select_piece(self, pos):
         #probably make it select the piece itself, instead of square
-        square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
-        if square.attached_piece != None: 
+        square = ([sq for sq in self.logic.board.ravel() if sq.rect.collidepoint(pos)])[0]
+        if square.attached_piece != None:
             self.selected_square = square
             self.held_piece = square.attached_piece
+            self.movable_squares = self.logic.piece_moves(square)
+            for sq in self.movable_squares:
+                print(sq)
     
     def drag_piece(self, pos):
         if self.held_piece == None: return
@@ -34,13 +38,26 @@ class Game:
         self.held_piece.update_rect()
 
     def release_piece(self, pos):
-        #TO-DO add so that the piece can be dropped onto a diff square, but only the valid squares it can go on
-        self.held_piece.pos.x = self.selected_square.pos.x
-        self.held_piece.pos.y = self.selected_square.pos.y
+        if self.selected_square == None: return
+
+        square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
+
+        if square in self.movable_squares:
+            self.held_piece.pos.x = square.pos.x
+            self.held_piece.pos.y = square.pos.y
+
+            self.board.pieces_list.remove(square.attached_piece)
+            square.attached_piece = self.selected_square.attached_piece
+            self.selected_square.attached_piece = None
+        else:
+            self.held_piece.pos.x = self.selected_square.pos.x
+            self.held_piece.pos.y = self.selected_square.pos.y
+
         self.held_piece.update_rect()
 
         self.selected_square = None
         self.held_piece = None
+        self.movable_squares = []
     
     def draw_elements(self, screen):
         self.board.draw_board(screen)
