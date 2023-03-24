@@ -72,14 +72,14 @@ class GameLogic:
                 if GameLogic.within_bounds(row + y_dir * 2, col + x_dir):
                     targeted_piece = self.board[row + y_dir * 2][col + x_dir].attached_piece
 
-                    if targeted_piece != None and targeted_piece.color != piece.color:
+                    if targeted_piece == None or targeted_piece.color != piece.color:
                         if self.test_move((row, col), (row + y_dir * 2, col + x_dir), piece.color):
                             range_of_motion.append(self.board[row + y_dir * 2][col + x_dir])
 
                 if GameLogic.within_bounds(row + y_dir, col + x_dir * 2):
                     targeted_piece = self.board[row + y_dir][col + x_dir * 2].attached_piece
 
-                    if targeted_piece != None and targeted_piece.color != piece.color:
+                    if targeted_piece == None or targeted_piece.color != piece.color:
                         if self.test_move((row, col), (row + y_dir, col + x_dir * 2), piece.color):
                             range_of_motion.append(self.board[row + y_dir][col + x_dir * 2])
             
