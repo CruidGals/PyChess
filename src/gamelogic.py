@@ -99,7 +99,7 @@ class GameLogic:
                     
                     targeted_piece = self.board[row + (i * dy)][col + (i * dx)].attached_piece
                     if targeted_piece == None:
-                        if self.test_move((row, col), (row + (i * dy), col + (i * dx)), Piece.NO_COLOR):
+                        if self.test_move((row, col), (row + (i * dy), col + (i * dx)), piece.color):
                             range_of_motion.append(self.board[row + (i * dy)][col + (i * dx)])
                         continue
 
@@ -126,8 +126,9 @@ class GameLogic:
                 if not GameLogic.within_bounds(row + i * dir, col): break
 
                 targeted_piece = self.board[row + i * dir][col].attached_piece
-                if targeted_piece == None and self.test_move((row, col), (row + i * dir, col), Piece.NO_COLOR):
-                    range_of_motion.append(self.board[row + i * dir][col])
+                if targeted_piece == None: 
+                    if self.test_move((row, col), (row + i * dir, col), piece.color):
+                        range_of_motion.append(self.board[row + i * dir][col])
                     continue
                 
                 if targeted_piece.color == piece.color:
@@ -145,8 +146,9 @@ class GameLogic:
                 if not GameLogic.within_bounds(row, col + i * dir): break
 
                 targeted_piece = self.board[row][col + i * dir].attached_piece
-                if targeted_piece == None and self.test_move((row, col), (row, col + i * dir), Piece.NO_COLOR):
-                    range_of_motion.append(self.board[row][col + i * dir])
+                if targeted_piece == None:
+                    if self.test_move((row, col), (row, col + i * dir), piece.color):
+                        range_of_motion.append(self.board[row][col + i * dir])
                     continue
                 
                 if targeted_piece.color == piece.color:
@@ -208,7 +210,6 @@ class GameLogic:
         if king_coords != None:
             row = king_coords[0]
             col = king_coords[1]
-
         #Check vertical: negative means up, positive means down
         for direction in range(-1, 2, 2):
             for i in range(direction, direction * 8, direction):
@@ -223,7 +224,7 @@ class GameLogic:
                     if (targeted_piece.piece == Piece.ROOK) or (targeted_piece.piece == Piece.QUEEN):
                         return True
                     break
-        
+
         #Check Horizontal and Diagonals: negative means left, postive means right
         #Starts top left diagonal. ends bottom right diagonal
         # (Remember, row is accessed from top to bottom, col is accessed from left to right)
@@ -273,7 +274,6 @@ class GameLogic:
                     if targeted_piece != None:
                         if targeted_piece.color == Piece.opposite_color(color) and targeted_piece.piece == Piece.KNIGHT:
                             return True
-        
         return False
 
     def test_move(self, original_coords, new_coords, color):
