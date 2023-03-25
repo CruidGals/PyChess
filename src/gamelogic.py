@@ -126,11 +126,11 @@ class GameLogic:
                 if not GameLogic.within_bounds(row + i * dir, col): break
 
                 targeted_piece = self.board[row + i * dir][col].attached_piece
-                if targeted_piece == None: 
+                if targeted_piece == None:
                     if self.test_move((row, col), (row + i * dir, col), piece.color):
                         range_of_motion.append(self.board[row + i * dir][col])
                     continue
-                
+
                 if targeted_piece.color == piece.color:
                     break
                 else:
@@ -165,10 +165,10 @@ class GameLogic:
     def queen_moves(self, square: Square):
         range_of_motion = []
 
-        for square in self.bishop_moves(square):
-            range_of_motion.append(square)
-        for square in self.rook_moves(square):
-            range_of_motion.append(square)
+        for sq in self.bishop_moves(square):
+            range_of_motion.append(sq)
+        for sq in self.rook_moves(square):
+            range_of_motion.append(sq)
         
         return range_of_motion
 
