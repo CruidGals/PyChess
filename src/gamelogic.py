@@ -102,7 +102,7 @@ class GameLogic:
                         if self.test_move((row, col), (row + (i * dy), col + (i * dx)), piece.color):
                             range_of_motion.append(self.board[row + (i * dy)][col + (i * dx)])
                         continue
-
+                    
                     if targeted_piece.color == piece.color:
                         break
                     else:
@@ -217,7 +217,7 @@ class GameLogic:
 
                 targeted_piece = self.board[row + i][col].attached_piece
                 if targeted_piece == None: continue
-                
+
                 if targeted_piece.color == color:
                     break
                 elif targeted_piece.color == Piece.opposite_color(color):
@@ -286,17 +286,18 @@ class GameLogic:
         if target_square.attached_piece != None:
             #Ignore piece used to ignore the piece that is being swapped that would be removed from the board
             if target_square.attached_piece.color == Piece.opposite_color(color):
-                ignore_square = target_square
+                ignore_square = orig_square
 
         #Checks if this function was called by king moves
         if orig_square.attached_piece.piece == Piece.KING:
             king_coords = (np.argwhere(self.board == target_square)[0][0], np.argwhere(self.board == target_square)[0][1])
-
-        orig_square, target_square = target_square, orig_square
         
+        orig_square.attached_piece, target_square.attached_piece = target_square.attached_piece, orig_square.attached_piece
+
         if not self.is_checked(color, ignore_square, king_coords):
             status = True
-        orig_square, target_square = target_square, orig_square
+
+        orig_square.attached_piece, target_square.attached_piece = target_square.attached_piece, orig_square.attached_piece
 
         return status
     #------------------------------------------------------
