@@ -20,6 +20,7 @@ class Game:
         self.selected_square = None
         self.held_piece = None
         self.movable_squares = []
+        self.is_dragging = False
     
     def select_piece(self, pos):
         #probably make it select the piece itself, instead of square
@@ -28,11 +29,10 @@ class Game:
             self.selected_square = square
             self.held_piece = square.attached_piece
             self.movable_squares = self.logic.piece_moves(square)
-            for sq in self.movable_squares:
-                print(sq)
+            self.is_dragging = True
     
     def drag_piece(self, pos):
-        if self.held_piece == None: return
+        if self.held_piece == None or self.is_dragging == False: return
         self.held_piece.pos.x = pos[0] - (Board.CELL_SIZE // 2)
         self.held_piece.pos.y = pos[1] - (Board.CELL_SIZE // 2)
         self.held_piece.update_rect()
@@ -54,6 +54,9 @@ class Game:
             self.held_piece.pos.y = self.selected_square.pos.y
 
         self.held_piece.update_rect()
+        if square == self.selected_square: 
+            self.is_dragging = False
+            return
 
         self.selected_square = None
         self.held_piece = None
