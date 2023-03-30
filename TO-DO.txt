@@ -1,0 +1,9 @@
+Important:
+    - Make highlight squares light up to indicate where piece can move
+    - Make it so it determines whose turn it is in the game
+    - Add functionality to the rest of the FEN stuff
+Other:
+    - When you drag a piece, it should be layered over everything. This doesn't work
+      when a black piece goes over a white piece.
+    - Make it so when you click the piece, anywhere else you click is valid
+        - Probably construct another 8 * 8 array for rectangles that may or may not display this square
