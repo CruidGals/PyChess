@@ -20,7 +20,7 @@ class GameLogic:
                 if piece.color == Piece.WHITE: self.white_king = square
                 else: self.black_king = square
     
-    def piece_moves(self, square: Square):
+    def piece_moves(self, square: Square, castling_information: str | None):
         piece = square.attached_piece
         if piece == None: return []
         
@@ -29,7 +29,7 @@ class GameLogic:
         elif piece.piece == Piece.BISHOP: return self.bishop_moves(square)
         elif piece.piece == Piece.ROOK: return self.rook_moves(square)
         elif piece.piece == Piece.QUEEN: return self.queen_moves(square)
-        elif piece.piece == Piece.KING: return self.king_moves(square)
+        elif piece.piece == Piece.KING: return self.king_moves(square, castling_information)
 
     #Piece Moves -----------------------------------------
     # (Assume that piece does not equal None) ------------
@@ -172,7 +172,7 @@ class GameLogic:
         
         return range_of_motion
 
-    def king_moves(self, square: Square):
+    def king_moves(self, square: Square, castling_information):
         piece = square.attached_piece
 
         row = np.argwhere(self.board == square)[0][0]
@@ -198,6 +198,15 @@ class GameLogic:
                     if targeted_piece.color == Piece.opposite_color(piece.color):
                         continue
         
+        if piece.color == Piece.WHITE:
+            #Checks if castling is valid and pieces between king and rook are clear
+            #TO-DO; if opposite color piece is controlling these squares, isn't able to castle
+            if 'K' in castling_information and (self.board[7][5].attached_piece == None and self.board[7][6].attached_piece == None): range_of_motion.append(self.board[7][6])
+            if 'Q' in castling_information and (self.board[7][1].attached_piece == None and self.board[7][2].attached_piece == None and self.board[7][3].attached_piece == None): range_of_motion.append(self.board[7][2])
+        elif piece.color == Piece.BLACK:
+            if 'k' in castling_information and (self.board[0][5].attached_piece == None and self.board[0][6].attached_piece == None): range_of_motion.append(self.board[0][6])
+            if 'q' in castling_information and (self.board[0][1].attached_piece == None and self.board[0][2].attached_piece == None and self.board[0][3].attached_piece == None): range_of_motion.append(self.board[0][2])
+
         return range_of_motion
 
     def is_checked(self, color, ignore_square: Square | None, king_coords: tuple | None) -> bool:

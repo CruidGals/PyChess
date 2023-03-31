@@ -26,8 +26,8 @@ class Game:
         if square.attached_piece != None and square.attached_piece.color == self.fen_decoder.side_to_move:
             self.selected_square = square
             self.held_piece = square.attached_piece
-            self.movable_squares = self.logic.piece_moves(square)
-    
+            self.movable_squares = self.logic.piece_moves(square, self.fen_decoder.castling_ability)
+
     def drag_piece(self, pos):
         if self.held_piece == None: return
         self.held_piece.pos.x = pos[0] - (Board.CELL_SIZE // 2)
@@ -40,16 +40,52 @@ class Game:
         square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
 
         if square in self.movable_squares:
-            self.held_piece.pos.x = square.pos.x
-            self.held_piece.pos.y = square.pos.y
-
+            self.held_piece.update_position(square)
             self.board.pieces_list.remove(square.attached_piece)
 
             if square.attached_piece != None:
                 self.fen_decoder.half_move_counter = 0
 
-            self.selected_square.attached_piece = None
+            #If rook moves, it eliminates the castling ability for that king's rook
+            if self.held_piece.piece == Piece.ROOK:
+                if self.selected_square.notation == 'h1' and 'K' in self.fen_decoder.castling_ability: self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('K', '')
+                elif self.selected_square.notation == 'a1'and 'Q' in self.fen_decoder.castling_ability: self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('Q', '')
+                elif self.selected_square.notation == 'h8'and 'k' in self.fen_decoder.castling_ability: self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('k', '')
+                elif self.selected_square.notation == 'a8'and 'q' in self.fen_decoder.castling_ability: self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('q', '')
+            
+            #Castling function; Swaps the rooks (rook gets sent from original position to new position):
+            #If king moves away from original square or castles, it loses all of its castling ability
+            if self.held_piece.piece == Piece.KING:
+                if self.held_piece.color == Piece.WHITE and self.selected_square.notation == 'e1':
+                    if square.notation == 'g1':
+                        self.board.board[7][5].attached_piece = self.board.board[7][7].attached_piece
+                        self.board.board[7][7].attached_piece = None
+                        self.board.board[7][5].attached_piece.update_position(self.board.board[7][5])
+                        self.board.board[7][5].attached_piece.update_rect()
+                    elif square.notation == 'c1':
+                        self.board.board[7][3].attached_piece = self.board.board[7][0].attached_piece
+                        self.board.board[7][0].attached_piece = None
+                        self.board.board[7][0].attached_piece.update_position(self.board.board[7][0])
+                        self.board.board[7][0].attached_piece.update_rect()
+                    self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('K', '')
+                    self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('Q', '')
+
+                if self.held_piece.color == Piece.BLACK and self.selected_square.notation == 'e8':
+                    if square.notation == 'g8':
+                        self.board.board[0][5].attached_piece = self.board.board[0][7].attached_piece
+                        self.board.board[0][7].attached_piece = None
+                        self.board.board[0][5].attached_piece.update_position(self.board.board[0][5])
+                        self.board.board[0][5].attached_piece.update_rect()
+                    elif square.notation == 'c8':
+                        self.board.board[0][3].attached_piece = self.board.board[0][0].attached_piece
+                        self.board.board[0][0].attached_piece = None
+                        self.board.board[0][3].attached_piece.update_position(self.board.board[0][3])
+                        self.board.board[0][3].attached_piece.update_rect()
+                    self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('k', '')
+                    self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('q', '')
+
             square.attached_piece = self.selected_square.attached_piece
+            self.selected_square.attached_piece = None
 
             if square.attached_piece.piece == Piece.PAWN:
                 if (square.attached_piece.color == Piece.WHITE and square in self.board.board[0]) or (square.attached_piece.color == Piece.BLACK and square in self.board.board[7]):
@@ -61,9 +97,9 @@ class Game:
                 self.fen_decoder.full_move_counter
 
             self.fen_decoder.side_to_move = Piece.opposite_color(self.fen_decoder.side_to_move)
+            print(self.fen_decoder.castling_ability)
         else:
-            self.held_piece.pos.x = self.selected_square.pos.x
-            self.held_piece.pos.y = self.selected_square.pos.y
+            self.held_piece.update_position(self.selected_square)
         
         self.held_piece.update_rect()
         

@@ -121,6 +121,10 @@ class Piece(pygame.sprite.Sprite):
 
     def update_rect(self):
         self.rect.update(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
+    
+    def update_position(self, square: Square):
+        self.pos.x = square.pos.x
+        self.pos.y = square.pos.y
 
     @staticmethod
     def opposite_color(color):
