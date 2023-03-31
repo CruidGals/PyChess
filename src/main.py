@@ -65,7 +65,7 @@ class Game:
                     elif square.notation == 'c1':
                         self.board.board[7][3].attached_piece = self.board.board[7][0].attached_piece
                         self.board.board[7][0].attached_piece = None
-                        self.board.board[7][3].attached_piece.update_position(self.board.board[7][0])
+                        self.board.board[7][3].attached_piece.update_position(self.board.board[7][3])
                         self.board.board[7][3].attached_piece.update_rect()
                     self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('K', '')
                     self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('Q', '')
