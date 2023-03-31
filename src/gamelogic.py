@@ -198,9 +198,12 @@ class GameLogic:
                     if targeted_piece.color == Piece.opposite_color(piece.color):
                         continue
         
+        #Checks if able to castle
+        #Three if conditionals:
+        # 1. Checks if has ability to castle on a certain side
+        # 2. Sees if castling lane is clear (no pieces on castling lane)
+        # 3. Checks if any of the opposite color's piece is controlling these squares
         if piece.color == Piece.WHITE:
-            #Checks if castling is valid and pieces between king and rook are clear
-            #TO-DO; if opposite color piece is controlling these squares, isn't able to castle
             if 'K' in castling_information and \
                (self.board[7][5].attached_piece == None and self.board[7][6].attached_piece == None) and \
                (self.test_move((row, col), (7, 5), piece.color) and self.test_move((row, col), (7, 6), piece.color)): 
