@@ -47,6 +47,11 @@ class Game:
             square.attached_piece = self.selected_square.attached_piece
             self.selected_square.attached_piece = None
 
+            if square.attached_piece.piece == Piece.PAWN:
+                if (square.attached_piece.color == Piece.WHITE and square in self.board.board[0]) or (square.attached_piece.color == Piece.BLACK and square in self.board.board[7]):
+                    square.attached_piece.piece = Piece.QUEEN
+                    square.attached_piece.update_image()
+
             self.fen_decoder.side_to_move = Piece.opposite_color(self.fen_decoder.side_to_move)
         else:
             self.held_piece.pos.x = self.selected_square.pos.x

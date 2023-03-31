@@ -99,9 +99,9 @@ class Piece(pygame.sprite.Sprite):
         self.piece = piece_type
 
         self.rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
-        self.initialize_image()
+        self.update_image()
 
-    def initialize_image(self):
+    def update_image(self):
         color = 'White' if self.color == Piece.WHITE else 'Black'
 
         if self.piece == Piece.PAWN:
