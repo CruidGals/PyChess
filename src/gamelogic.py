@@ -201,11 +201,23 @@ class GameLogic:
         if piece.color == Piece.WHITE:
             #Checks if castling is valid and pieces between king and rook are clear
             #TO-DO; if opposite color piece is controlling these squares, isn't able to castle
-            if 'K' in castling_information and (self.board[7][5].attached_piece == None and self.board[7][6].attached_piece == None): range_of_motion.append(self.board[7][6])
-            if 'Q' in castling_information and (self.board[7][1].attached_piece == None and self.board[7][2].attached_piece == None and self.board[7][3].attached_piece == None): range_of_motion.append(self.board[7][2])
+            if 'K' in castling_information and \
+               (self.board[7][5].attached_piece == None and self.board[7][6].attached_piece == None) and \
+               (self.test_move((row, col), (7, 5), piece.color) and self.test_move((row, col), (7, 6), piece.color)): 
+                range_of_motion.append(self.board[7][6])
+            if 'Q' in castling_information and \
+               (self.board[7][1].attached_piece == None and self.board[7][2].attached_piece == None and self.board[7][3].attached_piece == None) and \
+               (self.test_move((row, col), (7, 1), piece.color) and self.test_move((row, col), (7, 2), piece.color) and self.test_move((row, col), (7, 3), piece.color)): 
+                range_of_motion.append(self.board[7][2])
         elif piece.color == Piece.BLACK:
-            if 'k' in castling_information and (self.board[0][5].attached_piece == None and self.board[0][6].attached_piece == None): range_of_motion.append(self.board[0][6])
-            if 'q' in castling_information and (self.board[0][1].attached_piece == None and self.board[0][2].attached_piece == None and self.board[0][3].attached_piece == None): range_of_motion.append(self.board[0][2])
+            if 'k' in castling_information and \
+               (self.board[0][5].attached_piece == None and self.board[0][6].attached_piece == None) and \
+               (self.test_move((row, col), (0, 5), piece.color) and self.test_move((row, col), (0, 6), piece.color)): 
+                range_of_motion.append(self.board[0][6])
+            if 'q' in castling_information and \
+               (self.board[0][1].attached_piece == None and self.board[0][2].attached_piece == None and self.board[0][3].attached_piece == None) and \
+               (self.test_move((row, col), (0, 1), piece.color) and self.test_move((row, col), (0, 2), piece.color) and self.test_move((row, col), (0, 3), piece.color)): 
+                range_of_motion.append(self.board[0][2])
 
         return range_of_motion
 
