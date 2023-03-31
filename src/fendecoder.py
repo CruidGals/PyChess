@@ -29,7 +29,7 @@ class FenDecoder:
             
             self.piece_placement.append(row)
 
-        self.side_to_move = fields[1]
+        self.side_to_move = Piece.WHITE if fields[1] == 'w' else Piece.BLACK
         self.castling_ability = fields[2]
         self.en_passant_square = fields[3]
         self.half_move_counter = int(fields[4])

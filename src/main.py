@@ -20,28 +20,22 @@ class Game:
         self.selected_square = None
         self.held_piece = None
         self.movable_squares = []
-        self.square_clicks = 0
     
     def select_piece(self, pos):
-        #probably make it select the piece itself, instead of square
         square = ([sq for sq in self.logic.board.ravel() if sq.rect.collidepoint(pos)])[0]
-        if square.attached_piece != None:
+        if square.attached_piece != None and square.attached_piece.color == self.fen_decoder.side_to_move:
             self.selected_square = square
             self.held_piece = square.attached_piece
             self.movable_squares = self.logic.piece_moves(square)
-
-        self.square_clicks += 1
     
     def drag_piece(self, pos):
-        if self.held_piece == None or self.square_clicks == 2: return
+        if self.held_piece == None: return
         self.held_piece.pos.x = pos[0] - (Board.CELL_SIZE // 2)
         self.held_piece.pos.y = pos[1] - (Board.CELL_SIZE // 2)
         self.held_piece.update_rect()
 
     def release_piece(self, pos):
-        if self.selected_square == None: 
-            self.square_clicks = 0
-            return
+        if self.selected_square == None: return
 
         square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
 
@@ -52,17 +46,13 @@ class Game:
             self.board.pieces_list.remove(square.attached_piece)
             square.attached_piece = self.selected_square.attached_piece
             self.selected_square.attached_piece = None
-            self.square_clicks = 0
+
+            self.fen_decoder.side_to_move = Piece.opposite_color(self.fen_decoder.side_to_move)
         else:
             self.held_piece.pos.x = self.selected_square.pos.x
             self.held_piece.pos.y = self.selected_square.pos.y
         
         self.held_piece.update_rect()
-
-        if self.square_clicks == 1:
-            return
-        elif self.square_clicks == 2:
-            self.square_clicks = 0
         
         #for sq in self.board.board.ravel():
         #    if sq.selected and (sq != self.selected_square and sq != square): sq.selected = False
