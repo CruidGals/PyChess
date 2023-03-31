@@ -44,13 +44,21 @@ class Game:
             self.held_piece.pos.y = square.pos.y
 
             self.board.pieces_list.remove(square.attached_piece)
-            square.attached_piece = self.selected_square.attached_piece
+
+            if square.attached_piece != None:
+                self.fen_decoder.half_move_counter = 0
+
             self.selected_square.attached_piece = None
+            square.attached_piece = self.selected_square.attached_piece
 
             if square.attached_piece.piece == Piece.PAWN:
                 if (square.attached_piece.color == Piece.WHITE and square in self.board.board[0]) or (square.attached_piece.color == Piece.BLACK and square in self.board.board[7]):
                     square.attached_piece.piece = Piece.QUEEN
                     square.attached_piece.update_image()
+                self.fen_decoder.half_move_counter = 0
+
+            if self.fen_decoder.side_to_move == Piece.BLACK:
+                self.fen_decoder.full_move_counter
 
             self.fen_decoder.side_to_move = Piece.opposite_color(self.fen_decoder.side_to_move)
         else:
