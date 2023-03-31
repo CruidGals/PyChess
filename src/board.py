@@ -53,7 +53,10 @@ class Board:
 class Square:
 
     LIGHT_SQUARE_COLOR = pygame.color.Color(238, 238, 213)
+    LIGHT_SQUARE_SELECTED_COLOR = pygame.color.Color(247, 247, 105)
+
     DARK_SQUARE_COLOR = pygame.color.Color(125, 148, 93)
+    DARK_SQUARE_SELECTED_COLOR = pygame.color.Color(187, 203, 43)
 
     def __init__(self, color, piece, pos: Vector2, notation: str) -> None:
         self.color = color
@@ -61,12 +64,18 @@ class Square:
         self.pos = pos
         self.notation = notation
         self.rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
+        self.selected = False
     
     def __str__(self):
         return self.notation
 
     def draw_square(self, board) -> None:
-        pygame.draw.rect(board, self.color, self.rect)
+        color = self.color if self.selected == False else Square.selected_color(self.color)
+        pygame.draw.rect(board, color, self.rect)
+    
+    @staticmethod
+    def selected_color(color):
+        return Square.LIGHT_SQUARE_SELECTED_COLOR if color == Square.LIGHT_SQUARE_COLOR else Square.DARK_SQUARE_SELECTED_COLOR
 
 class Piece(pygame.sprite.Sprite):
 
