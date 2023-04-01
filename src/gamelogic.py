@@ -2,6 +2,7 @@ import pygame
 from pygame import Vector2
 import numpy as np
 from board import Piece, Square
+from fendecoder import FenDecoder
 
 #In this class, it uses a list of squares to access the pieces on the board. This means that
 #you should assume every variable that seems to contain a piece to contain a Square,
@@ -20,7 +21,7 @@ class GameLogic:
                 if piece.color == Piece.WHITE: self.white_king = square
                 else: self.black_king = square
     
-    def piece_moves(self, square: Square, castling_information: str | None):
+    def piece_moves(self, square: Square):
         piece = square.attached_piece
         if piece == None: return []
         
@@ -29,7 +30,7 @@ class GameLogic:
         elif piece.piece == Piece.BISHOP: return self.bishop_moves(square)
         elif piece.piece == Piece.ROOK: return self.rook_moves(square)
         elif piece.piece == Piece.QUEEN: return self.queen_moves(square)
-        elif piece.piece == Piece.KING: return self.king_moves(square, castling_information)
+        elif piece.piece == Piece.KING: return self.king_moves(square)
 
     #Piece Moves -----------------------------------------
     # (Assume that piece does not equal None) ------------
@@ -172,7 +173,7 @@ class GameLogic:
         
         return range_of_motion
 
-    def king_moves(self, square: Square, castling_information):
+    def king_moves(self, square: Square):
         piece = square.attached_piece
 
         row = np.argwhere(self.board == square)[0][0]
@@ -198,6 +199,7 @@ class GameLogic:
                     if targeted_piece.color == Piece.opposite_color(piece.color):
                         continue
         
+        castling_information = FenDecoder.castling_ability
         #Checks if able to castle
         #Three if conditionals:
         # 1. Checks if has ability to castle on a certain side
