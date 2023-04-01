@@ -40,9 +40,6 @@ class Game:
         square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
 
         if square in self.movable_squares:
-            self.held_piece.update_position(square)
-            self.board.pieces_list.remove(square.attached_piece)
-
             if square.attached_piece != None:
                 self.fen_decoder.half_move_counter = 0
 
@@ -58,34 +55,27 @@ class Game:
             if self.held_piece.piece == Piece.KING:
                 if self.held_piece.color == Piece.WHITE and self.selected_square.notation == 'e1':
                     if square.notation == 'g1':
-                        self.board.board[7][5].attached_piece = self.board.board[7][7].attached_piece
-                        self.board.board[7][7].attached_piece = None
-                        self.board.board[7][5].attached_piece.update_position(self.board.board[7][5])
-                        self.board.board[7][5].attached_piece.update_rect()
+                        self.board.swap_pieces(self.board.board[7][7], self.board.board[7][5])
                     elif square.notation == 'c1':
-                        self.board.board[7][3].attached_piece = self.board.board[7][0].attached_piece
-                        self.board.board[7][0].attached_piece = None
-                        self.board.board[7][3].attached_piece.update_position(self.board.board[7][3])
-                        self.board.board[7][3].attached_piece.update_rect()
+                        self.board.swap_pieces(self.board.board[7][0], self.board.board[7][3])
                     self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('K', '')
                     self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('Q', '')
 
                 if self.held_piece.color == Piece.BLACK and self.selected_square.notation == 'e8':
                     if square.notation == 'g8':
-                        self.board.board[0][5].attached_piece = self.board.board[0][7].attached_piece
-                        self.board.board[0][7].attached_piece = None
-                        self.board.board[0][5].attached_piece.update_position(self.board.board[0][5])
-                        self.board.board[0][5].attached_piece.update_rect()
+                        self.board.swap_pieces(self.board.board[0][7], self.board.board[0][5])
                     elif square.notation == 'c8':
-                        self.board.board[0][3].attached_piece = self.board.board[0][0].attached_piece
-                        self.board.board[0][0].attached_piece = None
-                        self.board.board[0][3].attached_piece.update_position(self.board.board[0][3])
-                        self.board.board[0][3].attached_piece.update_rect()
+                        self.board.swap_pieces(self.board.board[0][0], self.board.board[0][3])
                     self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('k', '')
                     self.fen_decoder.castling_ability = self.fen_decoder.castling_ability.replace('q', '')
 
-            square.attached_piece = self.selected_square.attached_piece
-            self.selected_square.attached_piece = None
+            self.board.pieces_list.remove(square.attached_piece)
+
+            self.board.swap_pieces(self.selected_square, square)
+
+            #self.held_piece.update_position(square)
+            #square.attached_piece = self.selected_square.attached_piece
+            #self.selected_square.attached_piece = None
 
             if square.attached_piece.piece == Piece.PAWN:
                 if (square.attached_piece.color == Piece.WHITE and square in self.board.board[0]) or (square.attached_piece.color == Piece.BLACK and square in self.board.board[7]):
@@ -97,11 +87,9 @@ class Game:
                 self.fen_decoder.full_move_counter
 
             self.fen_decoder.side_to_move = Piece.opposite_color(self.fen_decoder.side_to_move)
-            print(self.fen_decoder.castling_ability)
         else:
-            self.held_piece.update_position(self.selected_square)
+            self.board.swap_pieces(self.selected_square, self.selected_square)
         
-        self.held_piece.update_rect()
         
         #for sq in self.board.board.ravel():
         #    if sq.selected and (sq != self.selected_square and sq != square): sq.selected = False
@@ -119,7 +107,7 @@ def main():
 
     #Chess board has 8 squares. 1 & a start at bottom left rook, 8 & h at top right black rook
     cell_size = Board.CELL_SIZE
-    screen = pygame.display.set_mode((8 * cell_size, 8 * cell_size))
+    screen = pygame.display.set_mode((8 * cell_size + 2 * cell_size, 8 * cell_size))
     pygame.display.set_caption('Chess')
     clock = pygame.time.Clock()
 
@@ -137,7 +125,7 @@ def main():
             if pygame.mouse.get_pressed()[0]:
                 game.drag_piece(pygame.mouse.get_pos())
         
-        screen.fill('Beige')
+        screen.fill('Grey')
         game.draw_elements(screen)
 
         pygame.display.update()

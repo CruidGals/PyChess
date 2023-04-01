@@ -42,6 +42,17 @@ class Board:
     def retrieve_square(self, code):
         return self.board[8 - int(code[1:])][ord(code[:1]) - 97]
 
+    #Allows for concise swapping of pieces
+    def swap_pieces(self, orig_square, new_square):
+
+        if orig_square.attached_piece != new_square.attached_piece:
+            new_square.attached_piece = orig_square.attached_piece
+            orig_square.attached_piece = None
+        
+        new_square.attached_piece.update_position(new_square)
+        new_square.attached_piece.update_rect()
+        
+
     def draw_board(self, screen):
         for square in self.board.ravel():
             square.draw_square(self.board_surface)
