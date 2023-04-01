@@ -68,6 +68,8 @@ class Game:
                         self.board.swap_pieces(self.board.board[0][0], self.board.board[0][3])
                     FenDecoder.castling_ability = FenDecoder.castling_ability.replace('k', '')
                     FenDecoder.castling_ability = FenDecoder.castling_ability.replace('q', '')
+                
+                self.logic.update_king_square(self.held_piece.color, square) #Need to update the position of the square for GameLogic
 
             #Handles Pawn Queening and En Passant functions
             if self.held_piece.piece == Piece.PAWN:

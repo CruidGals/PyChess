@@ -326,7 +326,13 @@ class GameLogic:
         orig_square.attached_piece, target_square.attached_piece = target_square.attached_piece, orig_square.attached_piece
 
         return status
-    #------------------------------------------------------
+    #---------------------------------------------------------
+    #If the king moves, this function needs to be called to update the current position of the king
+    #Function only called when square has a king (no need for guard clauses)
+    def update_king_square(self, color, square):
+        if color == Piece.WHITE: self.white_king = square
+        elif color == Piece.BLACK: self.black_king = square
+
     @staticmethod               
     def within_bounds(x, y) -> bool:
         if x < 0 or x > 7 or y < 0 or y > 7:
