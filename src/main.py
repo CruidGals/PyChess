@@ -26,7 +26,7 @@ class Game:
         if square.attached_piece != None and square.attached_piece.color == FenDecoder.side_to_move:
             self.selected_square = square
             self.held_piece = square.attached_piece
-            self.movable_squares = self.logic.piece_moves(square)
+            self.movable_squares = self.logic.piece_moves(square, self.board.retrieve_square(FenDecoder.en_passant_square))
 
     def drag_piece(self, pos):
         if self.held_piece == None: return
@@ -78,6 +78,17 @@ class Game:
                     self.held_piece.piece = Piece.QUEEN
                     self.held_piece.update_image()
                 
+                #Checks if a pawn does en passant: (If enpassant square is on file 6, white must take. If on 3, black must take)
+                if square.notation == FenDecoder.en_passant_square:
+                    target_square = None
+                    if FenDecoder.en_passant_square[1] == '6' and self.held_piece.color == Piece.WHITE:
+                        target_square = self.board.retrieve_square('{}5'.format(FenDecoder.en_passant_square[0]))
+                    elif FenDecoder.en_passant_square[1] == '3' and self.held_piece.color == Piece.BLACK:
+                        target_square = self.board.retrieve_square('{}4'.format(FenDecoder.en_passant_square[0]))
+
+                    self.board.pieces_list.remove(target_square.attached_piece)
+                    target_square.attached_piece = None
+                
                 #Checks for an en passant square: if pawn double moves, make the enpassant square the square below the pawn
                 if self.held_piece.color == Piece.WHITE and (self.selected_square in self.board.board[6] and square in self.board.board[4]):
                     FenDecoder.en_passant_square = '{}3'.format(square.notation[0]) #square.notation[0] grabs the rank of the square 
@@ -85,9 +96,6 @@ class Game:
                     FenDecoder.en_passant_square = '{}6'.format(square.notation[0]) #square.notation[0] grabs the rank of the square 
                 else:
                     FenDecoder.en_passant_square = '-'
-                
-
-
             elif FenDecoder.en_passant_square != '-':
                 FenDecoder.en_passant_square = '-'
             
@@ -97,7 +105,6 @@ class Game:
             self.board.swap_pieces(self.selected_square, square)
 
             FenDecoder.side_to_move = Piece.opposite_color(FenDecoder.side_to_move)
-            print(FenDecoder.en_passant_square)
         else:
             self.board.swap_pieces(self.selected_square, self.selected_square)
         

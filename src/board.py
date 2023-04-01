@@ -40,6 +40,7 @@ class Board:
 
     #Retrieve square from code (ie a1, e2)
     def retrieve_square(self, code):
+        if code == '-': return
         return self.board[8 - int(code[1:])][ord(code[:1]) - 97]
 
     #Allows for concise swapping of pieces

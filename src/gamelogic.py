@@ -21,11 +21,11 @@ class GameLogic:
                 if piece.color == Piece.WHITE: self.white_king = square
                 else: self.black_king = square
     
-    def piece_moves(self, square: Square):
+    def piece_moves(self, square: Square, en_passant_square: Square | None):
         piece = square.attached_piece
         if piece == None: return []
         
-        if piece.piece == Piece.PAWN: return self.pawn_moves(square)
+        if piece.piece == Piece.PAWN: return self.pawn_moves(square, en_passant_square)
         elif piece.piece == Piece.KNIGHT: return self.knight_moves(square)
         elif piece.piece == Piece.BISHOP: return self.bishop_moves(square)
         elif piece.piece == Piece.ROOK: return self.rook_moves(square)
@@ -34,7 +34,7 @@ class GameLogic:
 
     #Piece Moves -----------------------------------------
     # (Assume that piece does not equal None) ------------
-    def pawn_moves(self, square: Square):
+    def pawn_moves(self, square: Square, en_passant_square: Square):
         piece = square.attached_piece
 
         row = np.argwhere(self.board == square)[0][0]
@@ -55,7 +55,7 @@ class GameLogic:
                     if (row == 1 and piece.color == Piece.BLACK) or (row == 6 and piece.color == Piece.WHITE) and self.board[row + (2 * direction)][col].attached_piece == None:
                         if self.test_move((row, col), (row + (2 * direction), col), piece.color):
                             range_of_motion.append(self.board[row + (2 * direction)][col])
-            elif self.board[row + direction][col + i].attached_piece != None and self.board[row + direction][col + i].attached_piece.color == Piece.opposite_color(piece.color):
+            elif (self.board[row + direction][col + i].attached_piece != None and self.board[row + direction][col + i].attached_piece.color == Piece.opposite_color(piece.color)) or self.board[row + direction][col + i] == en_passant_square:
                 if self.test_move((row, col), (row + direction, col + i), piece.color):
                     range_of_motion.append(self.board[row + direction][col + i])
         
