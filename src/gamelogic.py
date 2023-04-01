@@ -205,7 +205,7 @@ class GameLogic:
         # 1. Checks if has ability to castle on a certain side
         # 2. Sees if castling lane is clear (no pieces on castling lane)
         # 3. Checks if any of the opposite color's piece is controlling these squares
-        if piece.color == Piece.WHITE:
+        if piece.color == Piece.WHITE and not self.is_checked(Piece.WHITE):
             if 'K' in castling_information and \
                (self.board[7][5].attached_piece == None and self.board[7][6].attached_piece == None) and \
                (self.test_move((row, col), (7, 5), piece.color) and self.test_move((row, col), (7, 6), piece.color)): 
@@ -214,7 +214,7 @@ class GameLogic:
                (self.board[7][1].attached_piece == None and self.board[7][2].attached_piece == None and self.board[7][3].attached_piece == None) and \
                (self.test_move((row, col), (7, 1), piece.color) and self.test_move((row, col), (7, 2), piece.color) and self.test_move((row, col), (7, 3), piece.color)): 
                 range_of_motion.append(self.board[7][2])
-        elif piece.color == Piece.BLACK:
+        elif piece.color == Piece.BLACK and not self.is_checked(Piece.BLACK):
             if 'k' in castling_information and \
                (self.board[0][5].attached_piece == None and self.board[0][6].attached_piece == None) and \
                (self.test_move((row, col), (0, 5), piece.color) and self.test_move((row, col), (0, 6), piece.color)): 
@@ -226,7 +226,7 @@ class GameLogic:
 
         return range_of_motion
 
-    def is_checked(self, color, ignore_square: Square | None, king_coords: tuple | None) -> bool:
+    def is_checked(self, color, ignore_square=None, king_coords=None) -> bool:
         if self.white_king == None or self.black_king == None: return False
 
         king_square = self.white_king if color == Piece.WHITE else self.black_king
