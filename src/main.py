@@ -36,6 +36,8 @@ class Game:
         self.held_piece.update_rect()
 
     def release_piece(self, pos):
+        game_over = False
+
         if self.selected_square == None: return
 
         square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
@@ -107,10 +109,13 @@ class Game:
             self.board.pieces_list.remove(square.attached_piece)
             self.board.swap_pieces(self.selected_square, square)
 
+            #Handles checkmate function
+            if FenDecoder.side_to_move == Piece.WHITE and self.logic.is_checked(Piece.BLACK) and self.logic.is_checkmate(Piece.BLACK): game_over = True
+            elif FenDecoder.side_to_move == Piece.BLACK and self.logic.is_checked(Piece.WHITE) and self.logic.is_checkmate(Piece.WHITE): game_over = True
+
             FenDecoder.side_to_move = Piece.opposite_color(FenDecoder.side_to_move)
         else:
             self.board.swap_pieces(self.selected_square, self.selected_square)
-        
         
         #for sq in self.board.board.ravel():
         #    if sq.selected and (sq != self.selected_square and sq != square): sq.selected = False
@@ -118,6 +123,8 @@ class Game:
         self.selected_square = None
         self.held_piece = None
         self.movable_squares = []
+
+        return game_over
     
     def draw_elements(self, screen):
         self.board.draw_board(screen)
@@ -142,7 +149,9 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 game.select_piece(pygame.mouse.get_pos())
             if event.type == pygame.MOUSEBUTTONUP:
-                game.release_piece(pygame.mouse.get_pos())
+                game_over = game.release_piece(pygame.mouse.get_pos())
+                if game_over:
+                    running = False
             if pygame.mouse.get_pressed()[0]:
                 game.drag_piece(pygame.mouse.get_pos())
         

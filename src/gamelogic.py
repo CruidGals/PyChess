@@ -1,3 +1,4 @@
+import pygame as py
 from pygame import Vector2
 import numpy as np
 from board import Piece, Square
@@ -325,7 +326,18 @@ class GameLogic:
         orig_square.attached_piece, target_square.attached_piece = target_square.attached_piece, orig_square.attached_piece
 
         return status
-    #---------------------------------------------------------
+    #Other Game Functiuons--------------------------------
+
+    #Checks for checkmate. False means no checkmate, True means yes checkmate
+    def is_checkmate(self, color):
+        piece_list = [p for p in self.board.ravel() if p != None and p.color == color]
+
+        for piece in piece_list:
+            if len(self.piece_moves(piece)) > 0: return False
+        
+        return True
+
+
     #If the king moves, this function needs to be called to update the current position of the king
     #Function only called when square has a king (no need for guard clauses)
     def update_king_square(self, color, square):
