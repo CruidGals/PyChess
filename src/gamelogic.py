@@ -1,4 +1,3 @@
-import pygame
 from pygame import Vector2
 import numpy as np
 from board import Piece, Square
@@ -21,7 +20,7 @@ class GameLogic:
                 if piece.color == Piece.WHITE: self.white_king = square
                 else: self.black_king = square
     
-    def piece_moves(self, square: Square, en_passant_square: Square | None):
+    def piece_moves(self, square: Square, en_passant_square=None):
         piece = square.attached_piece
         if piece == None: return []
         
