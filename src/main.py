@@ -23,10 +23,11 @@ class Game:
     
     def select_piece(self, pos):
         square = ([sq for sq in self.logic.board.ravel() if sq.rect.collidepoint(pos)])[0]
-        if square.attached_piece != None and square.attached_piece.color == FenDecoder.side_to_move:
+        if square.attached_piece != None:
             self.selected_square = square
             self.held_piece = square.attached_piece
-            self.movable_squares = self.logic.piece_moves(square, self.board.retrieve_square(FenDecoder.en_passant_square))
+            #Allows movement of opposite color piece, but won't do anything
+            self.movable_squares = self.logic.piece_moves(square, self.board.retrieve_square(FenDecoder.en_passant_square)) if FenDecoder.side_to_move == self.held_piece.color else []
 
     def drag_piece(self, pos):
         if self.held_piece == None: return
