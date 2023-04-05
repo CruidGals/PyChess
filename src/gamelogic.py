@@ -212,7 +212,7 @@ class GameLogic:
                 range_of_motion.append(self.board[7][6])
             if 'Q' in castling_information and \
                (self.board[7][1].attached_piece == None and self.board[7][2].attached_piece == None and self.board[7][3].attached_piece == None) and \
-               (self.test_move((row, col), (7, 1), piece.color) and self.test_move((row, col), (7, 2), piece.color) and self.test_move((row, col), (7, 3), piece.color)): 
+               (self.test_move((row, col), (7, 2), piece.color) and self.test_move((row, col), (7, 3), piece.color)): 
                 range_of_motion.append(self.board[7][2])
         elif piece.color == Piece.BLACK and not self.is_checked(Piece.BLACK):
             if 'k' in castling_information and \
@@ -221,7 +221,7 @@ class GameLogic:
                 range_of_motion.append(self.board[0][6])
             if 'q' in castling_information and \
                (self.board[0][1].attached_piece == None and self.board[0][2].attached_piece == None and self.board[0][3].attached_piece == None) and \
-               (self.test_move((row, col), (0, 1), piece.color) and self.test_move((row, col), (0, 2), piece.color) and self.test_move((row, col), (0, 3), piece.color)): 
+               (self.test_move((row, col), (0, 2), piece.color) and self.test_move((row, col), (0, 3), piece.color)): 
                 range_of_motion.append(self.board[0][2])
 
         return range_of_motion
@@ -334,10 +334,10 @@ class GameLogic:
 
         if not self.is_checked(tested_color): return False
 
-        piece_list = [p for p in self.board.ravel() if p != None and p.color == tested_color]
+        square_list = [sq for sq in self.board.ravel() if sq.attached_piece != None and sq.attached_piece.color == tested_color]
 
-        for piece in piece_list:
-            if len(self.piece_moves(piece)) > 0: return False
+        for square in square_list:
+            if len(self.piece_moves(square)) > 0: return False
         
         return True
 
