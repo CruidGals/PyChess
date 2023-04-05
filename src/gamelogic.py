@@ -329,14 +329,46 @@ class GameLogic:
     #Other Game Functiuons--------------------------------
 
     #Checks for checkmate. False means no checkmate, True means yes checkmate
-    def is_checkmate(self, color):
-        piece_list = [p for p in self.board.ravel() if p != None and p.color == color]
+    def is_checkmate(self, side_to_move):
+        tested_color = Piece.opposite_color(side_to_move)
+
+        if not self.is_checked(tested_color): return False
+
+        piece_list = [p for p in self.board.ravel() if p != None and p.color == tested_color]
 
         for piece in piece_list:
             if len(self.piece_moves(piece)) > 0: return False
         
         return True
 
+    #Method only called if a move is made
+    def update_castling_ability(self, orig_square: Square) -> None:
+        piece = orig_square.attached_piece
+
+        if FenDecoder.castling_ability == '-': return
+
+        if piece.piece == Piece.ROOK:
+            if orig_square.notation == 'h1' and 'K' in FenDecoder.castling_ability: FenDecoder.castling_ability = FenDecoder.castling_ability.replace('K', '')
+            elif orig_square.notation == 'a1'and 'Q' in FenDecoder.castling_ability: FenDecoder.castling_ability = FenDecoder.castling_ability.replace('Q', '')
+            elif orig_square.notation == 'h8'and 'k' in FenDecoder.castling_ability: FenDecoder.castling_ability = FenDecoder.castling_ability.replace('k', '')
+            elif orig_square.notation == 'a8'and 'q' in FenDecoder.castling_ability: FenDecoder.castling_ability = FenDecoder.castling_ability.replace('q', '')
+        elif piece.piece == Piece.KING:
+            if piece.color == Piece.WHITE and orig_square.notation == 'e1':
+                FenDecoder.castling_ability = FenDecoder.castling_ability.replace('K', '')
+                FenDecoder.castling_ability = FenDecoder.castling_ability.replace('Q', '')
+            elif piece.color == Piece.BLACK and orig_square.notation == 'e8':
+                FenDecoder.castling_ability = FenDecoder.castling_ability.replace('k', '')
+                FenDecoder.castling_ability = FenDecoder.castling_ability.replace('q', '')
+
+        if FenDecoder.castling_ability == '': FenDecoder.castling_ability = '-'
+
+    def update_en_passant_square(self, color, orig_square: Square, new_square: Square) -> None:
+        if color == Piece.WHITE and (orig_square in self.board[6] and new_square in self.board[4]):
+            FenDecoder.en_passant_square = '{}3'.format(new_square.notation[0]) #square.notation[0] grabs the rank of the square 
+        elif color == Piece.BLACK and (orig_square in self.board[1] and new_square in self.board[3]):
+            FenDecoder.en_passant_square = '{}6'.format(new_square.notation[0]) #square.notation[0] grabs the rank of the square 
+        else:
+            FenDecoder.en_passant_square = '-'
 
     #If the king moves, this function needs to be called to update the current position of the king
     #Function only called when square has a king (no need for guard clauses)

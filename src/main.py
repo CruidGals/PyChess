@@ -36,22 +36,16 @@ class Game:
         self.held_piece.update_rect()
 
     def release_piece(self, pos):
-        game_over = False
-
         if self.selected_square == None: return
 
+        game_over = False
         square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
 
         if square in self.movable_squares:
             if square.attached_piece != None:
                 FenDecoder.half_move_counter = 0
-
-            #If rook moves, it eliminates the castling ability for that king's rook
-            if self.held_piece.piece == Piece.ROOK:
-                if self.selected_square.notation == 'h1' and 'K' in FenDecoder.castling_ability: FenDecoder.castling_ability = FenDecoder.castling_ability.replace('K', '')
-                elif self.selected_square.notation == 'a1'and 'Q' in FenDecoder.castling_ability: FenDecoder.castling_ability = FenDecoder.castling_ability.replace('Q', '')
-                elif self.selected_square.notation == 'h8'and 'k' in FenDecoder.castling_ability: FenDecoder.castling_ability = FenDecoder.castling_ability.replace('k', '')
-                elif self.selected_square.notation == 'a8'and 'q' in FenDecoder.castling_ability: FenDecoder.castling_ability = FenDecoder.castling_ability.replace('q', '')
+            
+            self.logic.update_castling_ability(self.selected_square) #If a king or rook move is made, checks to see if it affects castling ability
             
             #Castling function; Swaps the rooks (rook gets sent from original position to new position):
             #If king moves away from original square or castles, it loses all of its castling ability
@@ -61,16 +55,12 @@ class Game:
                         self.board.swap_pieces(self.board.board[7][7], self.board.board[7][5])
                     elif square.notation == 'c1':
                         self.board.swap_pieces(self.board.board[7][0], self.board.board[7][3])
-                    FenDecoder.castling_ability = FenDecoder.castling_ability.replace('K', '')
-                    FenDecoder.castling_ability = FenDecoder.castling_ability.replace('Q', '')
 
                 if self.held_piece.color == Piece.BLACK and self.selected_square.notation == 'e8':
                     if square.notation == 'g8':
                         self.board.swap_pieces(self.board.board[0][7], self.board.board[0][5])
                     elif square.notation == 'c8':
                         self.board.swap_pieces(self.board.board[0][0], self.board.board[0][3])
-                    FenDecoder.castling_ability = FenDecoder.castling_ability.replace('k', '')
-                    FenDecoder.castling_ability = FenDecoder.castling_ability.replace('q', '')
                 
                 self.logic.update_king_square(self.held_piece.color, square) #Need to update the position of the square for GameLogic
 
@@ -95,12 +85,7 @@ class Game:
                     target_square.attached_piece = None
                 
                 #Checks for an en passant square: if pawn double moves, make the enpassant square the square below the pawn
-                if self.held_piece.color == Piece.WHITE and (self.selected_square in self.board.board[6] and square in self.board.board[4]):
-                    FenDecoder.en_passant_square = '{}3'.format(square.notation[0]) #square.notation[0] grabs the rank of the square 
-                elif self.held_piece.color == Piece.BLACK and (self.selected_square in self.board.board[1] and square in self.board.board[3]):
-                    FenDecoder.en_passant_square = '{}6'.format(square.notation[0]) #square.notation[0] grabs the rank of the square 
-                else:
-                    FenDecoder.en_passant_square = '-'
+                self.logic.update_en_passant_square(self.held_piece.color, self.selected_square, square)             
             elif FenDecoder.en_passant_square != '-':
                 FenDecoder.en_passant_square = '-'
             
@@ -109,9 +94,8 @@ class Game:
             self.board.pieces_list.remove(square.attached_piece)
             self.board.swap_pieces(self.selected_square, square)
 
-            #Handles checkmate function
-            if FenDecoder.side_to_move == Piece.WHITE and self.logic.is_checked(Piece.BLACK) and self.logic.is_checkmate(Piece.BLACK): game_over = True
-            elif FenDecoder.side_to_move == Piece.BLACK and self.logic.is_checked(Piece.WHITE) and self.logic.is_checkmate(Piece.WHITE): game_over = True
+            #Handles checkmate function (Just closes the game at the moment)
+            game_over = self.logic.is_checkmate(FenDecoder.side_to_move)
 
             FenDecoder.side_to_move = Piece.opposite_color(FenDecoder.side_to_move)
         else:
