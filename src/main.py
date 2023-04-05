@@ -2,6 +2,7 @@ import pygame
 from board import *
 from gamelogic import GameLogic
 from fendecoder import FenDecoder
+from graphics import Graphics
 from sys import exit
 
 class Game:
@@ -16,6 +17,7 @@ class Game:
         self.fen_decoder = FenDecoder(self.fen_str)
         self.board = Board(FenDecoder.piece_placement)
         self.logic = GameLogic(self.board.board)
+        self.graphics = Graphics(self.board.board)
 
         self.selected_square = None
         self.held_piece = None
@@ -45,6 +47,7 @@ class Game:
             if square.attached_piece != None:
                 FenDecoder.half_move_counter = 0
             
+            self.graphics.move_piece_gfx(self.selected_square, square)
             self.logic.update_castling_ability(self.selected_square) #If a king or rook move is made, checks to see if it affects castling ability
             
             #Castling function; Swaps the rooks (rook gets sent from original position to new position):

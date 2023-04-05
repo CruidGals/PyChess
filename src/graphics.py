@@ -16,4 +16,12 @@ class Graphics:
         pass
 
     def move_piece_gfx(self, orig_square, new_square):
-        pass
+        if self.orig_square != None and self.new_square != None:
+            self.orig_square.selected = False
+            self.new_square.selected = False
+
+        self.orig_square = orig_square
+        self.orig_square.selected = True
+        
+        self.new_square = new_square
+        self.new_square.selected = True
