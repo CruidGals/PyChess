@@ -22,14 +22,20 @@ class Game:
         self.selected_square = None
         self.held_piece = None
         self.movable_squares = []
+
+        #for click moving
+        self.previous_square = None
     
     def select_piece(self, pos):
         square = ([sq for sq in self.logic.board.ravel() if sq.rect.collidepoint(pos)])[0]
         if square.attached_piece != None:
             self.selected_square = square
             self.held_piece = square.attached_piece
+
             #Allows movement of opposite color piece, but won't do anything
             self.movable_squares = self.logic.piece_moves(square, self.board.retrieve_square(FenDecoder.en_passant_square)) if FenDecoder.side_to_move == self.held_piece.color else []
+        
+        self.graphics.select_piece_gfx(square)
 
     def drag_piece(self, pos):
         if self.held_piece == None: return
@@ -39,6 +45,7 @@ class Game:
 
     def release_piece(self, pos):
         if self.selected_square == None: return
+        if self.held_piece == None: self.held_piece = self.selected_square.attached_piece
 
         game_over = False
         square = ([sq for sq in self.board.board.ravel() if sq.rect.collidepoint(pos)])[0]
@@ -99,18 +106,24 @@ class Game:
 
             #Handles checkmate function (Just closes the game at the moment)
             game_over = self.logic.is_checkmate(FenDecoder.side_to_move)
-
             FenDecoder.side_to_move = Piece.opposite_color(FenDecoder.side_to_move)
+
+            self.selected_square = None
+            self.movable_squares = []
+            self.previous_square = None
         else:
             self.board.swap_pieces(self.selected_square, self.selected_square)
-        
-        #for sq in self.board.board.ravel():
-        #    if sq.selected and (sq != self.selected_square and sq != square): sq.selected = False
 
-        self.selected_square = None
+            if self.previous_square == square and self.previous_square != self.graphics.new_square:
+                self.selected_square.selected = False
+                self.selected_square = None
+                self.movable_squares = []
+                self.previous_square = None
+            else:
+                self.previous_square = self.selected_square
+
         self.held_piece = None
-        self.movable_squares = []
-
+        
         return game_over
     
     def draw_elements(self, screen):
