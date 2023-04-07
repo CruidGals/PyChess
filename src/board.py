@@ -117,17 +117,17 @@ class Piece(pygame.sprite.Sprite):
         color = 'White' if self.color == Piece.WHITE else 'Black'
 
         if self.piece == Piece.PAWN:
-            self.image = pygame.image.load(os.path.join('..', 'resources', '{}Pawn.png'.format(color))).convert_alpha()
+            self.image = pygame.image.load(os.path.join('resources', '{}Pawn.png'.format(color))).convert_alpha()
         elif self.piece == Piece.KNIGHT:
-            self.image = pygame.image.load(os.path.join('..', 'resources', '{}Knight.png'.format(color))).convert_alpha()
+            self.image = pygame.image.load(os.path.join('resources', '{}Knight.png'.format(color))).convert_alpha()
         elif self.piece == Piece.BISHOP:
-            self.image = pygame.image.load(os.path.join('..', 'resources', '{}Bishop.png'.format(color))).convert_alpha()
+            self.image = pygame.image.load(os.path.join('resources', '{}Bishop.png'.format(color))).convert_alpha()
         elif self.piece == Piece.ROOK:
-            self.image = pygame.image.load(os.path.join('..', 'resources', '{}Rook.png'.format(color))).convert_alpha()
+            self.image = pygame.image.load(os.path.join('resources', '{}Rook.png'.format(color))).convert_alpha()
         elif self.piece == Piece.QUEEN:
-            self.image = pygame.image.load(os.path.join('..', 'resources', '{}Queen.png'.format(color))).convert_alpha()
+            self.image = pygame.image.load(os.path.join('resources', '{}Queen.png'.format(color))).convert_alpha()
         elif self.piece == Piece.KING:
-            self.image = pygame.image.load(os.path.join('..', 'resources', '{}King.png'.format(color))).convert_alpha()
+            self.image = pygame.image.load(os.path.join('resources', '{}King.png'.format(color))).convert_alpha()
         
         self.image = pygame.transform.smoothscale(self.image, (Board.CELL_SIZE, Board.CELL_SIZE))
 
