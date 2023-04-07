@@ -28,7 +28,9 @@ class Game:
     
     def select_piece(self, pos):
         square = ([sq for sq in self.logic.board.ravel() if sq.rect.collidepoint(pos)])[0]
-        if square.attached_piece != None:
+        if square in self.movable_squares:
+            self.release_piece(pos)
+        elif square.attached_piece != None:
             self.selected_square = square
             self.held_piece = square.attached_piece
 
