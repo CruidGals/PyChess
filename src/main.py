@@ -17,7 +17,7 @@ class Game:
         self.fen_decoder = FenDecoder(self.fen_str)
         self.board = Board(FenDecoder.piece_placement)
         self.logic = GameLogic(self.board.board)
-        self.graphics = Graphics(self.board.board)
+        self.graphics = Graphics(self.board.board, self.board.CELL_SIZE)
 
         self.selected_square = None
         self.held_piece = None
@@ -141,6 +141,9 @@ def main():
     pygame.display.set_caption('Chess')
     clock = pygame.time.Clock()
 
+    idle_cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW)
+    hand_cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_HAND)
+
     game = Game()
 
     running = True
@@ -156,6 +159,11 @@ def main():
                     running = False
             if pygame.mouse.get_pressed()[0]:
                 game.drag_piece(pygame.mouse.get_pos())
+        
+        if ([sq for sq in game.board.board.ravel() if sq.rect.collidepoint(pygame.mouse.get_pos())])[0].attached_piece != None or game.held_piece != None:
+            pygame.mouse.set_cursor(hand_cursor)
+        else:
+            pygame.mouse.set_cursor(idle_cursor)
         
         screen.fill('Grey')
         game.draw_elements(screen)
