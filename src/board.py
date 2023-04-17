@@ -4,7 +4,7 @@ import numpy as np
 
 class Board:
 
-    CELL_SIZE = 100 # dictates the size of the board
+    CELL_SIZE = 150 # dictates the size of the board
 
     def __init__(self, piece_placement) -> None:
         board = []
