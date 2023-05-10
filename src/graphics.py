@@ -53,7 +53,7 @@ class Graphics:
             for index, piece in enumerate(self.promotion_screen_pieces.sprites()):
                 piece.color = Piece.WHITE
                 piece.pos.x = sq_x
-                piece.pos.y = (7-index) * Graphics.board_size
+                piece.pos.y = (index) * Graphics.board_size
                 piece.update_rect()
                 piece.update_image()
         elif color == Piece.BLACK:

@@ -23,21 +23,36 @@ class Game:
         self.held_piece = None
         self.movable_squares = []
 
+        #for pawn promotion
+        self.pawn_promoting = False
+        self.promoting_square = None
+
         #for click moving
         self.previous_square = None
     
     def select_piece(self, pos):
-        square = ([sq for sq in self.logic.board.ravel() if sq.rect.collidepoint(pos)])[0]
-        if square in self.movable_squares:
-            self.release_piece(pos) #For instant click moving
-        elif square.attached_piece != None:
-            self.selected_square = square
-            self.held_piece = square.attached_piece
+        if not self.pawn_promoting:
+            square = ([sq for sq in self.logic.board.ravel() if sq.rect.collidepoint(pos)])[0]
+            if square in self.movable_squares:
+                self.release_piece(pos) #For instant click moving
+            elif square.attached_piece != None:
+                self.selected_square = square
+                self.held_piece = square.attached_piece
 
-            #Allows movement of opposite color piece, but won't do anything
-            self.movable_squares = self.logic.piece_moves(square, self.board.retrieve_square(FenDecoder.en_passant_square)) if FenDecoder.side_to_move == self.held_piece.color else []
+                #Allows movement of opposite color piece, but won't do anything
+                self.movable_squares = self.logic.piece_moves(square, self.board.retrieve_square(FenDecoder.en_passant_square)) if FenDecoder.side_to_move == self.held_piece.color else []
         
-        self.graphics.select_piece_gfx(square)
+            self.graphics.select_piece_gfx(square)
+        else: #For pawn promotion
+            try:
+                piece = ([p for p in self.graphics.promotion_screen_pieces.sprites() if p.rect.collidepoint(pos)])[0]
+                self.promoting_square.attached_piece.piece = piece.piece
+                self.promoting_square.attached_piece.update_image()
+
+                self.promoting_square = None
+                self.pawn_promoting = False
+            except:
+                pass
 
     def drag_piece(self, pos):
         if self.held_piece == None: return
@@ -80,10 +95,10 @@ class Game:
             if self.held_piece.piece == Piece.PAWN:
                 FenDecoder.half_move_counter = 0
 
-                #Queening
+                #Pawn Promotion
                 if (self.held_piece.color == Piece.WHITE and square in self.board.board[0]) or (self.held_piece.color == Piece.BLACK and square in self.board.board[7]):
-                    self.held_piece.piece = Piece.QUEEN
-                    self.held_piece.update_image()
+                    self.promoting_square = square
+                    self.pawn_promoting = True
                 
                 #Checks if a pawn does en passant: (If enpassant square is on file 6, white must take. If on 3, black must take)
                 if square.notation == FenDecoder.en_passant_square:
@@ -131,6 +146,7 @@ class Game:
     def draw_elements(self, screen):
         self.board.draw_board(screen)
         self.board.draw_pieces(screen)
+        if self.pawn_promoting: self.graphics.draw_pawn_promotion(screen, self.promoting_square, self.promoting_square.attached_piece.color)
 
 def main():
     pygame.init()
