@@ -269,7 +269,7 @@ class GameLogic:
                         break
                     elif targeted_piece.color == Piece.opposite_color(color):
                         #Check Pawn
-                        if targeted_piece == Piece.PAWN:
+                        if targeted_piece.piece == Piece.PAWN:
                             if dy == -1 and color == Piece.WHITE: return True
                             elif dy == 1 and color == Piece.BLACK : return True    
 
