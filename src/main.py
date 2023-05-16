@@ -17,7 +17,7 @@ class Game:
         self.fen_decoder = FenDecoder(self.fen_str)
         self.board = Board(FenDecoder.piece_placement)
         self.logic = GameLogic(self.board.board)
-        self.graphics = Graphics(self.board.board, self.board.CELL_SIZE)
+        self.graphics = Graphics(self.board.board, self.board.CELL_SIZE, self.board.pieces_list)
 
         self.selected_square = None
         self.held_piece = None

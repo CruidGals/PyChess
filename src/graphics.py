@@ -8,7 +8,7 @@ class Graphics:
     #Reference
     board_size = 0
 
-    def __init__(self, board, size) -> None:
+    def __init__(self, board, size, piece_list) -> None:
         self.board = board
         Graphics.board_size = size
 
@@ -22,6 +22,8 @@ class Graphics:
         self.selected_square = None 
         self.orig_square = board[0][0] #Makes it some random square
         self.new_square = board[0][0]  #Same with this
+
+        self.piece_layer = piece_list
     
     #Handles other graphic related properties when moved a piece
     def select_piece_gfx(self, square):
@@ -33,7 +35,11 @@ class Graphics:
         
         self.selected_square = square
 
+        self.piece_layer.change_layer(square.attached_piece, 1)
+
     def move_piece_gfx(self, orig_square, new_square):
+        self.piece_layer.change_layer(orig_square.attached_piece, 0)
+        
         self.orig_square.selected = False
         self.new_square.selected = False
 
@@ -44,6 +50,7 @@ class Graphics:
         self.new_square.selected = True
 
         self.selected_square = None
+
     
     def draw_pawn_promotion(self, screen, square: Square, color):
         sq_x = square.pos.x

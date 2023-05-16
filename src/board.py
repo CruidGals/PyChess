@@ -35,7 +35,7 @@ class Board:
         self.board = np.array(board)
         self.board_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8))
 
-        self.pieces_list = pygame.sprite.Group(pieces)
+        self.pieces_list = pygame.sprite.LayeredUpdates(pieces)
         self.piece_surface = pygame.Surface((Board.CELL_SIZE * 8, Board.CELL_SIZE * 8), pygame.SRCALPHA, 32)
 
     #Retrieve square from code (ie a1, e2)
@@ -109,6 +109,7 @@ class Piece(pygame.sprite.Sprite):
         self.color = color
         self.pos = pos
         self.piece = piece_type
+        self._layer = 0
 
         self.rect = pygame.Rect(self.pos.x, self.pos.y, Board.CELL_SIZE, Board.CELL_SIZE)
         self.update_image()
