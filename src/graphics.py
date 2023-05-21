@@ -35,10 +35,10 @@ class Graphics:
         
         self.selected_square = square
 
-        self.piece_layer.change_layer(square.attached_piece, 1)
+        if square.attached_piece != None: self.piece_layer.change_layer(square.attached_piece, 1)
 
     def move_piece_gfx(self, orig_square, new_square):
-        self.piece_layer.change_layer(orig_square.attached_piece, 0)
+        if orig_square.attached_piece != None: self.piece_layer.change_layer(orig_square.attached_piece, 0)
         
         self.orig_square.selected = False
         self.new_square.selected = False
@@ -50,7 +50,6 @@ class Graphics:
         self.new_square.selected = True
 
         self.selected_square = None
-
     
     def draw_pawn_promotion(self, screen, square: Square, color):
         sq_x = square.pos.x
